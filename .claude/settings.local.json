@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/Maxi G/Documents/GitHub/TrimminFlow-Backend/demo/src/main/resources/**)",
+      "Read(//c/Users/Maxi G/Documents/GitHub/TrimminFlow-Backend/demo/src/main/java/com/trimminflow/demo/entity/**)",
+      "Read(//c/Users/Maxi G/Documents/GitHub/TrimminFlow-Backend/demo/src/main/java/com/trimminflow/demo/dto/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

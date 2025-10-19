@@ -1,0 +1,572 @@
+import { useState, useEffect } from "react";
+import { motion, useScroll, useTransform } from "motion/react";
+import { Button } from "./ui/button";
+import { Card, CardContent } from "./ui/card";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { 
+  Scissors, 
+  Star, 
+  Clock, 
+  MapPin, 
+  Phone, 
+  Instagram, 
+  CheckCircle,
+  Calendar,
+  Heart,
+  ArrowRight,
+  Quote,
+  Users,
+  Award,
+  Coffee
+} from "lucide-react";
+
+export function WarmBooking() {
+  const [selectedService, setSelectedService] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
+  const [isFormVisible, setIsFormVisible] = useState(false);
+  
+  const { scrollY } = useScroll();
+  const y1 = useTransform(scrollY, [0, 300], [0, -30]);
+  const y2 = useTransform(scrollY, [0, 300], [0, -60]);
+
+  const services = [
+    { 
+      id: "signature", 
+      name: "Signature Cut", 
+      price: "€45", 
+      duration: "60 min",
+      description: "Our signature style with personalized consultation",
+      popular: true
+    },
+    { 
+      id: "classic", 
+      name: "Classic Cut", 
+      price: "€35", 
+      duration: "45 min",
+      description: "Traditional barbering with timeless appeal"
+    },
+    { 
+      id: "beard", 
+      name: "Beard Trim", 
+      price: "€25", 
+      duration: "30 min",
+      description: "Professional beard grooming and styling"
+    },
+    { 
+      id: "combo", 
+      name: "Full Service", 
+      price: "€65", 
+      duration: "90 min",
+      description: "Complete grooming experience with hot towel",
+      premium: true
+    },
+  ];
+
+  const timeSlots = [
+    "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+    "12:00", "12:30", "14:00", "14:30", "15:00", "15:30",
+    "16:00", "16:30", "17:00", "17:30", "18:00"
+  ];
+
+  const testimonials = [
+    {
+      name: "Michael Thompson",
+      text: "Best barbershop in town! The team always makes me feel welcome and the cuts are consistently excellent.",
+      rating: 5,
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+    },
+    {
+      name: "David Rodriguez",
+      text: "Love the friendly atmosphere here. It's like visiting old friends who happen to be amazing barbers.",
+      rating: 5,
+      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+    },
+    {
+      name: "James Wilson",
+      text: "Been coming here for years. The quality and personal touch keep me coming back every time.",
+      rating: 5,
+      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face"
+    }
+  ];
+
+  useEffect(() => {
+    if (selectedService && selectedDate) {
+      setIsFormVisible(true);
+    }
+  }, [selectedService, selectedDate]);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-25 to-yellow-50 text-gray-800 overflow-hidden">
+      {/* Warm decorative elements */}
+      <motion.div 
+        className="fixed top-20 right-20 w-32 h-32 bg-amber-200/30 rounded-full blur-2xl"
+        animate={{ 
+          scale: [1, 1.2, 1],
+          opacity: [0.3, 0.5, 0.3]
+        }}
+        transition={{ 
+          duration: 8,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+      <motion.div 
+        className="fixed bottom-40 left-20 w-24 h-24 bg-orange-200/40 rounded-full blur-xl"
+        animate={{ 
+          scale: [1, 1.3, 1],
+          x: [0, 20, 0],
+          y: [0, -15, 0]
+        }}
+        transition={{ 
+          duration: 12,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+
+      {/* Hero Section */}
+      <motion.section 
+        className="relative min-h-screen flex items-center justify-center overflow-hidden"
+        style={{ y: y1 }}
+      >
+        {/* Background Image with Warm Overlay */}
+        <div className="absolute inset-0 z-0">
+          <ImageWithFallback
+            src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3YXJtJTIwYmFyYmVyc2hvcCUyMGludGVyaW9yfGVufDF8fHx8MTc1ODA5NjM1OXww&ixlib=rb-4.1.0&q=80&w=1080"
+            alt="Warm Barbershop Interior"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-amber-100/80 via-orange-50/60 to-yellow-50/40" />
+        </div>
+
+        {/* Hero Content */}
+        <div className="relative z-10 text-center px-6 max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="flex items-center justify-center gap-4 mb-8"
+          >
+            <motion.div
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+              className="w-16 h-16 bg-gradient-to-r from-amber-600 to-orange-700 rounded-full flex items-center justify-center shadow-lg"
+            >
+              <Scissors className="w-8 h-8 text-white" />
+            </motion.div>
+            <h1 className="text-6xl md:text-8xl font-bold text-transparent bg-gradient-to-r from-amber-800 via-orange-700 to-yellow-800 bg-clip-text">
+              TRIMMINFLOW
+            </h1>
+          </motion.div>
+          
+          <motion.p 
+            className="text-xl md:text-2xl text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            Your neighborhood barbershop where tradition meets style. 
+            Experience quality cuts in a warm, welcoming atmosphere.
+          </motion.p>
+
+          <motion.div 
+            className="flex flex-wrap items-center justify-center gap-8 mb-12"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            <div className="flex items-center gap-2 text-amber-700 bg-white/70 px-4 py-2 rounded-full">
+              <Star className="w-5 h-5 fill-current" />
+              <span className="font-medium">4.9/5 Rating</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-700 bg-white/70 px-4 py-2 rounded-full">
+              <Clock className="w-5 h-5" />
+              <span>Open Daily 9AM-7PM</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-700 bg-white/70 px-4 py-2 rounded-full">
+              <MapPin className="w-5 h-5" />
+              <span>Downtown Location</span>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+          >
+            <Button 
+              size="lg"
+              className="bg-gradient-to-r from-amber-600 to-orange-700 hover:from-amber-700 hover:to-orange-800 text-white font-bold text-lg px-12 py-6 rounded-full shadow-xl transform transition-all duration-300 hover:scale-105"
+              onClick={() => document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              <Heart className="w-5 h-5 mr-2" />
+              Book Your Visit
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+          </motion.div>
+        </div>
+
+        {/* Scroll indicator */}
+        <motion.div 
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <div className="w-6 h-10 border-2 border-amber-600/50 rounded-full flex justify-center">
+            <div className="w-1 h-3 bg-amber-600/60 rounded-full mt-2" />
+          </div>
+        </motion.div>
+      </motion.section>
+
+      {/* Services Section */}
+      <motion.section 
+        id="booking"
+        className="py-24 px-6 bg-gradient-to-b from-white/60 to-orange-50/80"
+        style={{ y: y2 }}
+      >
+        <div className="max-w-7xl mx-auto">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <h2 className="text-5xl font-bold mb-6 text-transparent bg-gradient-to-r from-amber-800 to-orange-800 bg-clip-text">
+              Our Services
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Choose from our carefully crafted selection of grooming services
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
+            {services.map((service, index) => (
+              <motion.div
+                key={service.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                whileHover={{ y: -5, scale: 1.02 }}
+                className="relative group cursor-pointer"
+                onClick={() => setSelectedService(service.id)}
+              >
+                <Card className={`bg-white/80 backdrop-blur border-amber-200 rounded-3xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:border-amber-400/50 ${
+                  selectedService === service.id ? 'ring-2 ring-amber-500 border-amber-500 shadow-xl' : ''
+                }`}>
+                  {service.popular && (
+                    <div className="absolute top-4 right-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                      POPULAR
+                    </div>
+                  )}
+                  {service.premium && (
+                    <div className="absolute top-4 right-4 bg-gradient-to-r from-amber-700 to-orange-800 text-white text-xs font-bold px-3 py-1 rounded-full">
+                      PREMIUM
+                    </div>
+                  )}
+                  
+                  <CardContent className="p-8">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-xl font-bold text-gray-800">{service.name}</h3>
+                      <div className="text-2xl font-bold text-amber-700">{service.price}</div>
+                    </div>
+                    
+                    <p className="text-gray-600 mb-4 leading-relaxed">{service.description}</p>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-500 flex items-center gap-1">
+                        <Clock className="w-4 h-4" />
+                        {service.duration}
+                      </span>
+                      {selectedService === service.id && (
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="flex items-center gap-1 text-amber-600"
+                        >
+                          <CheckCircle className="w-5 h-5" />
+                          <span className="text-sm font-medium">Selected</span>
+                        </motion.div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Split Layout - Date/Time Selection and Form */}
+          {selectedService && (
+            <motion.div 
+              className="grid lg:grid-cols-2 gap-12 items-start"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              {/* Left Side - Date and Time Selection */}
+              <div className="space-y-8">
+                {/* Date Selection */}
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-800 mb-6">Select Date</h3>
+                  <div className="grid grid-cols-4 gap-3">
+                    {Array.from({ length: 14 }, (_, i) => {
+                      const date = new Date();
+                      date.setDate(date.getDate() + i);
+                      const dateStr = date.toISOString().split('T')[0];
+                      const dayName = date.toLocaleDateString('en', { weekday: 'short' });
+                      const dayNum = date.getDate();
+                      
+                      return (
+                        <motion.button
+                          key={dateStr}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => setSelectedDate(dateStr)}
+                          className={`p-4 rounded-2xl border-2 transition-all duration-300 ${
+                            selectedDate === dateStr
+                              ? 'border-amber-500 bg-gradient-to-r from-amber-100 to-orange-100 text-amber-800 shadow-lg'
+                              : 'border-amber-200 bg-white/70 text-gray-700 hover:border-amber-300 hover:bg-white/90'
+                          }`}
+                        >
+                          <div className="text-sm opacity-70">{dayName}</div>
+                          <div className="text-lg font-bold">{dayNum}</div>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Time Selection */}
+                {selectedDate && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <h3 className="text-2xl font-bold text-gray-800 mb-6">Available Times</h3>
+                    <div className="grid grid-cols-3 gap-3">
+                      {timeSlots.map((time) => (
+                        <motion.button
+                          key={time}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => setSelectedTime(time)}
+                          className={`p-4 rounded-xl font-medium transition-all duration-300 ${
+                            selectedTime === time
+                              ? 'bg-gradient-to-r from-amber-600 to-orange-700 text-white shadow-lg'
+                              : 'bg-white/70 text-gray-700 hover:bg-white/90 border border-amber-200 hover:border-amber-300'
+                          }`}
+                        >
+                          {time}
+                        </motion.button>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Right Side - Booking Form */}
+              <div className="space-y-8">
+                {/* Booking Form */}
+                {isFormVisible && (
+                  <motion.div
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6 }}
+                  >
+                    <Card className="bg-white/90 backdrop-blur border-amber-200 rounded-3xl shadow-xl">
+                      <CardContent className="p-8">
+                        <h3 className="text-2xl font-bold text-gray-800 mb-6">Complete Your Booking</h3>
+                        
+                        <div className="space-y-6">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="firstName" className="text-gray-700">First Name</Label>
+                              <Input 
+                                id="firstName"
+                                placeholder="John"
+                                className="bg-white/90 border-amber-200 text-gray-800 rounded-xl focus:border-amber-500 focus:ring-amber-500/20"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="lastName" className="text-gray-700">Last Name</Label>
+                              <Input 
+                                id="lastName"
+                                placeholder="Doe"
+                                className="bg-white/90 border-amber-200 text-gray-800 rounded-xl focus:border-amber-500 focus:ring-amber-500/20"
+                              />
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="phone" className="text-gray-700">Phone Number</Label>
+                            <Input 
+                              id="phone"
+                              placeholder="+1 (555) 123-4567"
+                              className="bg-white/90 border-amber-200 text-gray-800 rounded-xl focus:border-amber-500 focus:ring-amber-500/20"
+                            />
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="email" className="text-gray-700">Email (Optional)</Label>
+                            <Input 
+                              id="email"
+                              type="email"
+                              placeholder="john@example.com"
+                              className="bg-white/90 border-amber-200 text-gray-800 rounded-xl focus:border-amber-500 focus:ring-amber-500/20"
+                            />
+                          </div>
+
+                          {/* Booking Summary */}
+                          <div className="bg-amber-50/80 rounded-2xl p-6 border border-amber-200">
+                            <h4 className="text-lg font-bold text-gray-800 mb-4">Booking Summary</h4>
+                            <div className="space-y-2 text-sm">
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Service:</span>
+                                <span className="text-gray-800 font-medium">{services.find(s => s.id === selectedService)?.name}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Date:</span>
+                                <span className="text-gray-800 font-medium">{selectedDate}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Time:</span>
+                                <span className="text-gray-800 font-medium">{selectedTime}</span>
+                              </div>
+                              <div className="flex justify-between font-bold text-lg pt-2 border-t border-amber-200">
+                                <span className="text-gray-600">Total:</span>
+                                <span className="text-amber-700">{services.find(s => s.id === selectedService)?.price}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <Button 
+                            size="lg"
+                            className="w-full bg-gradient-to-r from-amber-600 to-orange-700 hover:from-amber-700 hover:to-orange-800 text-white font-bold text-lg py-6 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105"
+                          >
+                            <Calendar className="w-5 h-5 mr-2" />
+                            Confirm Booking
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                )}
+
+                {/* Why Choose Us */}
+                <Card className="bg-white/80 backdrop-blur border-amber-200 rounded-3xl">
+                  <CardContent className="p-8">
+                    <h4 className="text-xl font-bold text-gray-800 mb-6">Why Choose Us?</h4>
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3">
+                        <Award className="w-6 h-6 text-amber-600" />
+                        <span className="text-gray-700">15+ years of experience</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Users className="w-6 h-6 text-amber-600" />
+                        <span className="text-gray-700">Family-friendly atmosphere</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Coffee className="w-6 h-6 text-amber-600" />
+                        <span className="text-gray-700">Complimentary refreshments</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Heart className="w-6 h-6 text-amber-600" />
+                        <span className="text-gray-700">Personalized service</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </motion.div>
+          )}
+        </div>
+      </motion.section>
+
+      {/* Testimonials Section */}
+      <section className="py-24 px-6 bg-gradient-to-b from-orange-50/80 to-amber-50/90">
+        <div className="max-w-6xl mx-auto">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <h2 className="text-4xl font-bold mb-6 text-gray-800">What Our Customers Say</h2>
+            <p className="text-xl text-gray-600">Real stories from our valued customers</p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                whileHover={{ y: -5 }}
+                className="relative"
+              >
+                <Card className="bg-white/90 backdrop-blur border-amber-200 rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300">
+                  <CardContent className="p-8">
+                    <Quote className="w-8 h-8 text-amber-600 mb-4" />
+                    <p className="text-gray-700 mb-6 italic leading-relaxed">"{testimonial.text}"</p>
+                    <div className="flex items-center gap-4">
+                      <ImageWithFallback
+                        src={testimonial.image}
+                        alt={testimonial.name}
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                      <div>
+                        <div className="text-gray-800 font-medium">{testimonial.name}</div>
+                        <div className="flex items-center gap-1">
+                          {Array.from({ length: testimonial.rating }).map((_, i) => (
+                            <Star key={i} className="w-4 h-4 text-amber-600 fill-current" />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-16 px-6 bg-gradient-to-b from-amber-100 to-orange-100">
+        <div className="max-w-6xl mx-auto text-center">
+          <div className="flex items-center justify-center gap-4 mb-8">
+            <div className="w-10 h-10 bg-gradient-to-r from-amber-600 to-orange-700 rounded-full flex items-center justify-center">
+              <Scissors className="w-5 h-5 text-white" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-800">TRIMMINFLOW</h3>
+          </div>
+          
+          <div className="flex flex-wrap items-center justify-center gap-8 mb-8 text-gray-600">
+            <div className="flex items-center gap-2">
+              <Phone className="w-5 h-5" />
+              <span>(555) 123-4567</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <MapPin className="w-5 h-5" />
+              <span>123 Main St, Downtown</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Instagram className="w-5 h-5" />
+              <span>@trimminflow</span>
+            </div>
+          </div>
+          
+          <p className="text-gray-500">© 2024 TRIMMINFLOW. All rights reserved.</p>
+        </div>
+      </footer>
+    </div>
+  );
+}
