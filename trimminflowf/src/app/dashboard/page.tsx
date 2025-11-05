@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
@@ -18,9 +19,31 @@ import {
   LogOut,
 } from 'lucide-react';
 import { mockAppointments, mockBarbers, mockCustomers, mockStats } from '@/lib/mockData';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Dashboard() {
+  const router = useRouter();
+  const { user, isAuthenticated, logout } = useAuth();
   const [selectedNav, setSelectedNav] = useState('dashboard');
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/login');
+    }
+  }, [isAuthenticated, router]);
+
+  // Show loading state while checking auth
+  if (!isAuthenticated || !user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#1a1a1a] to-[#2d2d2d] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400 mx-auto"></div>
+          <p className="mt-4 text-gray-400">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Get today's appointments
   const today = new Date().toISOString().split('T')[0];
@@ -107,7 +130,10 @@ export default function Dashboard() {
         </nav>
 
         <div className="absolute bottom-6 left-6 right-6">
-          <button className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-white/5 hover:text-white rounded-xl transition-all w-full">
+          <button
+            onClick={logout}
+            className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-white/5 hover:text-white rounded-xl transition-all w-full"
+          >
             <LogOut className="w-5 h-5" />
             <span className="font-medium">Logout</span>
           </button>
@@ -126,7 +152,7 @@ export default function Dashboard() {
           >
             <div>
               <h1 className="text-5xl font-bold bg-gradient-to-r from-white via-gray-100 to-yellow-200 bg-clip-text text-transparent mb-2">
-                Welcome back!
+                Welcome back, {user.firstName}!
               </h1>
               <p className="text-gray-400 text-lg">Here's what's happening with your barbershop today.</p>
             </div>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Bebas_Neue, Oswald } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 // Bold, condensed font for headings and branding
 const bebasNeue = Bebas_Neue({
@@ -33,7 +34,9 @@ export default function RootLayout({
       <body
         className={`${oswald.variable} ${bebasNeue.variable} antialiased font-sans`}
       >
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
