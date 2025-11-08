@@ -1,4 +1,6 @@
 import { Barbershop } from '@/types';
+import { Service, CreateServiceRequest, UpdateServiceRequest } from '@/types/service';
+import apiClient from './axios';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
 
@@ -147,6 +149,125 @@ export const authApi = {
       }
       throw new ApiError(500, 'Network error: Could not connect to the server');
     }
+  },
+};
+
+/**
+ * Service API
+ *
+ * CRUD operations for managing barbershop services
+ * Uses axios with automatic JWT token injection
+ */
+export const serviceApi = {
+  /**
+   * Create a new service
+   *
+   * @param barbershopId - The barbershop's UUID
+   * @param data - Service creation data
+   * @returns Created service
+   */
+  async create(barbershopId: string, data: CreateServiceRequest): Promise<Service> {
+    const response = await apiClient.post<Service>('/services', data, {
+      headers: {
+        'X-Barbershop-Id': barbershopId,
+      },
+    });
+    return response.data;
+  },
+
+  /**
+   * Get all services for a barbershop
+   *
+   * @param barbershopId - The barbershop's UUID
+   * @returns List of all services
+   */
+  async getAll(barbershopId: string): Promise<Service[]> {
+    const response = await apiClient.get<Service[]>('/services', {
+      headers: {
+        'X-Barbershop-Id': barbershopId,
+      },
+    });
+    return response.data;
+  },
+
+  /**
+   * Get all active services for a barbershop
+   *
+   * @param barbershopId - The barbershop's UUID
+   * @returns List of active services
+   */
+  async getActive(barbershopId: string): Promise<Service[]> {
+    const response = await apiClient.get<Service[]>('/services/active', {
+      headers: {
+        'X-Barbershop-Id': barbershopId,
+      },
+    });
+    return response.data;
+  },
+
+  /**
+   * Get a specific service by ID
+   *
+   * @param barbershopId - The barbershop's UUID
+   * @param serviceId - The service's UUID
+   * @returns Service details
+   */
+  async getById(barbershopId: string, serviceId: string): Promise<Service> {
+    const response = await apiClient.get<Service>(`/services/${serviceId}`, {
+      headers: {
+        'X-Barbershop-Id': barbershopId,
+      },
+    });
+    return response.data;
+  },
+
+  /**
+   * Update an existing service
+   *
+   * @param barbershopId - The barbershop's UUID
+   * @param serviceId - The service's UUID
+   * @param data - Update data (only provided fields will be updated)
+   * @returns Updated service
+   */
+  async update(
+    barbershopId: string,
+    serviceId: string,
+    data: UpdateServiceRequest
+  ): Promise<Service> {
+    const response = await apiClient.put<Service>(`/services/${serviceId}`, data, {
+      headers: {
+        'X-Barbershop-Id': barbershopId,
+      },
+    });
+    return response.data;
+  },
+
+  /**
+   * Delete a service (soft delete)
+   *
+   * @param barbershopId - The barbershop's UUID
+   * @param serviceId - The service's UUID
+   */
+  async delete(barbershopId: string, serviceId: string): Promise<void> {
+    await apiClient.delete(`/services/${serviceId}`, {
+      headers: {
+        'X-Barbershop-Id': barbershopId,
+      },
+    });
+  },
+
+  /**
+   * Permanently delete a service
+   *
+   * @param barbershopId - The barbershop's UUID
+   * @param serviceId - The service's UUID
+   */
+  async hardDelete(barbershopId: string, serviceId: string): Promise<void> {
+    await apiClient.delete(`/services/${serviceId}/hard`, {
+      headers: {
+        'X-Barbershop-Id': barbershopId,
+      },
+    });
   },
 };
 
