@@ -8,12 +8,13 @@ import Navbar from '@/components/layout/Navbar';
 export default function RegisterPage() {
   const navLinks = [
     { href: '/', label: 'Back to Home', variant: 'default' as const },
-    { href: '/dashboard', label: 'View Dashboard', variant: 'outline' as const },
+    { href: '/login', label: 'Login', variant: 'default' as const },
+    { href: '/dashboard', label: 'Dashboard', variant: 'outline' as const, requiresAuth: true },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
-      <Navbar links={navLinks} />
+      <Navbar links={navLinks} showAuth={true} />
 
       {/* Main Content */}
       <div className="pt-32 pb-20 px-6">

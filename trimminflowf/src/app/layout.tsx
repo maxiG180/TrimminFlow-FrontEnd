@@ -33,6 +33,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${oswald.variable} ${bebasNeue.variable} antialiased font-sans`}
+        suppressHydrationWarning
       >
         <AuthProvider>
           {children}

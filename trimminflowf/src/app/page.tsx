@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import Navbar from "@/components/layout/Navbar";
 import {
   Scissors,
   Calendar,
@@ -88,38 +89,17 @@ export default function Home() {
     "QR code generator"
   ];
 
+  const navLinks = [
+    { href: '#features', label: 'Features', variant: 'default' as const },
+    { href: '#pricing', label: 'Pricing', variant: 'default' as const },
+    { href: '#testimonials', label: 'Reviews', variant: 'default' as const },
+    { href: '/dashboard', label: 'Dashboard', variant: 'outline' as const, requiresAuth: true },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
       {/* Header */}
-      <motion.header
-        className="fixed top-0 w-full z-50 bg-black/20 backdrop-blur-xl border-b border-white/10"
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 bg-gray-800/50 backdrop-blur-xl border-2 border-dashed border-white/20 rounded-lg flex items-center justify-center">
-              <span className="text-xs text-gray-500 font-mono">LOGO</span>
-            </div>
-            <h1 className="text-2xl font-bold font-heading tracking-wider">TRIMMINFLOW</h1>
-          </div>
-          <nav className="hidden md:flex items-center gap-6">
-            <a href="#features" className="text-gray-300 hover:text-yellow-400 transition-colors">Features</a>
-            <a href="#pricing" className="text-gray-300 hover:text-yellow-400 transition-colors">Pricing</a>
-            <a href="#testimonials" className="text-gray-300 hover:text-yellow-400 transition-colors">Reviews</a>
-            <Link href="/register" className="text-gray-300 hover:text-yellow-400 transition-colors font-medium">
-              Register Barbershop
-            </Link>
-            <Link href="/dashboard" className="px-4 py-2 border border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black rounded-lg transition-colors">
-              Dashboard
-            </Link>
-            <Link href="/auth/register" className="px-4 py-2 bg-gradient-to-r from-yellow-400 to-amber-500 text-black hover:from-yellow-500 hover:to-amber-600 rounded-lg transition-colors font-medium">
-              Start Free Trial
-            </Link>
-          </nav>
-        </div>
-      </motion.header>
+      <Navbar links={navLinks} showAuth={true} />
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-6">

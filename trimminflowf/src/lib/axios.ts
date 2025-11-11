@@ -3,56 +3,37 @@ import axios from 'axios';
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
 
 /**
- * Axios instance with JWT authentication interceptor
+ * Axios instance with httpOnly cookie authentication
+ *
+ * 🔒 PRODUCTION-READY SECURITY:
+ * - JWT token stored in httpOnly cookie (set by backend)
+ * - Protected from XSS attacks (JavaScript cannot access httpOnly cookies)
+ * - Browser automatically sends cookies with every request
+ * - No manual token management needed
  *
  * This instance automatically:
- * 1. Adds the JWT token to every request's Authorization header
- * 2. Handles token expiration and authentication errors
- *
- * HOW IT WORKS:
- * - Request interceptor: Runs before every request, adds "Authorization: Bearer <token>" header
- * - Response interceptor: Catches 401 errors and can trigger logout/refresh
+ * 1. Sends cookies with every request (withCredentials: true)
+ * 2. Handles authentication errors (401) and triggers logout
  */
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true, // ✅ CRITICAL! Send cookies with every request
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
 /**
- * Function to set the token getter
- * This will be called by the AuthProvider to provide access to the token
- */
-let tokenGetter: (() => string | null) | null = null;
-
-export function setTokenGetter(getter: () => string | null) {
-  tokenGetter = getter;
-}
-
-/**
- * Request Interceptor
+ * No request interceptor needed!
  *
- * Runs BEFORE every request is sent
- * Adds the JWT token from memory to the Authorization header
+ * With httpOnly cookies, the browser automatically sends the cookie with every request.
+ * We don't need to manually add Authorization headers anymore.
+ *
+ * The backend's JwtAuthenticationFilter will:
+ * 1. Read the JWT from the httpOnly cookie
+ * 2. Validate the token
+ * 3. Set the authentication in Spring Security context
  */
-apiClient.interceptors.request.use(
-  (config) => {
-    // Get token from memory via the tokenGetter function
-    const token = tokenGetter?.();
-
-    // If token exists, add it to the Authorization header
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    return config;
-  },
-  (error) => {
-    // Handle request errors
-    return Promise.reject(error);
-  }
-);
 
 /**
  * Response Interceptor

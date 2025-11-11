@@ -125,28 +125,57 @@ export const authApi = {
    */
   async register(data: RegisterRequest): Promise<RegisterResponse> {
     try {
+      console.log('📝 Registration attempt:', { email: data.email, barbershopName: data.barbershopName });
+
       const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', // ✅ Include credentials for CORS
         body: JSON.stringify(data),
       });
 
+      console.log('📡 Registration response status:', response.status);
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+        console.error('❌ Registration failed:', errorData);
+
+        // Handle validation errors from backend
+        if (errorData.fieldErrors) {
+          const fieldMessages = Object.entries(errorData.fieldErrors)
+            .map(([field, message]) => `${field}: ${message}`)
+            .join(', ');
+          throw new ApiError(
+            response.status,
+            `Validation errors: ${fieldMessages}`,
+            errorData
+          );
+        }
+
         throw new ApiError(
           response.status,
-          errorData.message || `Registration failed: ${response.statusText}`,
+          errorData.message || errorData.error || `Registration failed: ${response.statusText}`,
           errorData
         );
       }
 
-      return await response.json();
+      const result = await response.json();
+      console.log('✅ Registration successful:', result.email);
+      return result;
     } catch (error) {
+      console.error('❌ Registration error:', error);
+
       if (error instanceof ApiError) {
         throw error;
       }
+
+      // Better error message for network failures
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        throw new ApiError(500, 'Cannot connect to server. Please ensure the backend is running on http://localhost:8080');
+      }
+
       throw new ApiError(500, 'Network error: Could not connect to the server');
     }
   },

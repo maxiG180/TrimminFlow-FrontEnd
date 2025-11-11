@@ -3,7 +3,12 @@
     "allow": [
       "Read(//c/Users/Maxi G/Documents/GitHub/TrimminFlow-Backend/demo/src/main/resources/**)",
       "Read(//c/Users/Maxi G/Documents/GitHub/TrimminFlow-Backend/demo/src/main/java/com/trimminflow/demo/entity/**)",
-      "Read(//c/Users/Maxi G/Documents/GitHub/TrimminFlow-Backend/demo/src/main/java/com/trimminflow/demo/dto/**)"
+      "Read(//c/Users/Maxi G/Documents/GitHub/TrimminFlow-Backend/demo/src/main/java/com/trimminflow/demo/dto/**)",
+      "Bash(curl:*)",
+      "Bash(./mvnw spring-boot:run:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)"
     ],
     "deny": [],
     "ask": []

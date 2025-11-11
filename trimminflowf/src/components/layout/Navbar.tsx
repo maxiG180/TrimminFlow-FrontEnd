@@ -2,23 +2,31 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Scissors } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/Button';
+import { LogOut, User } from 'lucide-react';
 
 export interface NavLink {
   href: string;
   label: string;
   variant?: 'default' | 'outline' | 'primary';
+  requiresAuth?: boolean;
+  roles?: string[]; // Only show for these roles
 }
 
 export interface NavbarProps {
   links?: NavLink[];
   showLogo?: boolean;
+  showAuth?: boolean; // Show login/register or user menu
 }
 
 const Navbar: React.FC<NavbarProps> = ({
   links = [],
-  showLogo = true
+  showLogo = true,
+  showAuth = false
 }) => {
+  const { user, isAuthenticated, logout } = useAuth();
+
   const getLinkClassName = (variant: string = 'default') => {
     const baseClass = 'transition-colors';
     const variants = {
@@ -28,6 +36,19 @@ const Navbar: React.FC<NavbarProps> = ({
     };
     return `${baseClass} ${variants[variant as keyof typeof variants] || variants.default}`;
   };
+
+  // Filter links based on authentication and roles
+  const visibleLinks = links.filter(link => {
+    // If link requires auth and user is not authenticated, hide it
+    if (link.requiresAuth && !isAuthenticated) return false;
+
+    // If link has role requirements, check if user has the role
+    if (link.roles && link.roles.length > 0 && user) {
+      return link.roles.includes(user.role);
+    }
+
+    return true;
+  });
 
   return (
     <motion.header
@@ -47,7 +68,7 @@ const Navbar: React.FC<NavbarProps> = ({
         )}
 
         <nav className="hidden md:flex items-center gap-6">
-          {links.map((link, index) => (
+          {visibleLinks.map((link, index) => (
             <Link
               key={index}
               href={link.href}
@@ -56,6 +77,48 @@ const Navbar: React.FC<NavbarProps> = ({
               {link.label}
             </Link>
           ))}
+
+          {/* Authentication Section */}
+          {showAuth && (
+            <>
+              {isAuthenticated ? (
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 text-gray-300">
+                    <User className="w-4 h-4" />
+                    <span className="text-sm">
+                      {user?.firstName} {user?.lastName}
+                    </span>
+                    <span className="text-xs text-yellow-400">
+                      ({user?.role})
+                    </span>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={logout}
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Logout
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-4">
+                  <Link
+                    href="/login"
+                    className={getLinkClassName('default')}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/register"
+                    className={getLinkClassName('primary')}
+                  >
+                    Register
+                  </Link>
+                </div>
+              )}
+            </>
+          )}
         </nav>
       </div>
     </motion.header>

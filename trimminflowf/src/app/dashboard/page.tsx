@@ -107,6 +107,7 @@ export default function Dashboard() {
           {[
             { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
             { id: 'calendar', label: 'Calendar', icon: Calendar },
+            { id: 'services', label: 'Services', icon: Scissors },
             { id: 'customers', label: 'Customers', icon: Users },
             { id: 'qr', label: 'QR Codes', icon: QrCode },
             { id: 'settings', label: 'Settings', icon: Settings },
