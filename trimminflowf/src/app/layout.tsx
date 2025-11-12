@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Bebas_Neue, Oswald } from "next/font/google";
-// @ts-ignore
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 
@@ -22,8 +21,7 @@ const oswald = Oswald({
 
 export const metadata: Metadata = {
   title: "TRIMMINFLOW - Modern Barbershop Management",
-  description:
-    "Transform your barbershop with smart scheduling, online booking, and customer management",
+  description: "Transform your barbershop with smart scheduling, online booking, and customer management",
 };
 
 export default function RootLayout({
@@ -37,7 +35,9 @@ export default function RootLayout({
         className={`${oswald.variable} ${bebasNeue.variable} antialiased font-sans`}
         suppressHydrationWarning
       >
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

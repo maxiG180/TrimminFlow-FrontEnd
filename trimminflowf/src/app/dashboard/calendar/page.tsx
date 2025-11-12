@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Link from "next/link";
-import { motion } from "framer-motion";
+import { useState } from 'react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
 import {
   ChevronLeft,
   ChevronRight,
@@ -14,11 +14,11 @@ import {
   QrCode,
   Settings,
   LogOut,
-} from "lucide-react";
+} from 'lucide-react';
 export default function CalendarPage() {
-  const [selectedNav, setSelectedNav] = useState("calendar");
+  const [selectedNav, setSelectedNav] = useState('calendar');
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedBarber, setSelectedBarber] = useState("all");
+  const [selectedBarber, setSelectedBarber] = useState('all');
 
   // TODO: Fetch from API - empty for now
   const mockBarbers: any[] = [];
@@ -40,27 +40,26 @@ export default function CalendarPage() {
   const weekDates = getWeekDates();
 
   // Filter appointments by selected barber
-  const filteredAppointments =
-    selectedBarber === "all"
-      ? mockAppointments
-      : mockAppointments.filter((apt) => apt.barberId === selectedBarber);
+  const filteredAppointments = selectedBarber === 'all'
+    ? mockAppointments
+    : mockAppointments.filter(apt => apt.barberId === selectedBarber);
 
   // Generate time slots (9:00 to 19:00)
   const timeSlots = Array.from({ length: 11 }, (_, i) => {
     const hour = 9 + i;
-    return `${hour.toString().padStart(2, "0")}:00`;
+    return `${hour.toString().padStart(2, '0')}:00`;
   });
 
   const getAppointmentForSlot = (date: Date, time: string) => {
-    const dateStr = date.toISOString().split("T")[0];
+    const dateStr = date.toISOString().split('T')[0];
     return filteredAppointments.find(
-      (apt) => apt.appointmentDate === dateStr && apt.startTime === time
+      apt => apt.appointmentDate === dateStr && apt.startTime === time
     );
   };
 
   const navigateWeek = (direction: number) => {
     const newDate = new Date(currentDate);
-    newDate.setDate(currentDate.getDate() + direction * 7);
+    newDate.setDate(currentDate.getDate() + (direction * 7));
     setCurrentDate(newDate);
   };
 
@@ -80,36 +79,11 @@ export default function CalendarPage() {
 
         <nav className="space-y-2">
           {[
-            {
-              id: "dashboard",
-              label: "Dashboard",
-              icon: LayoutDashboard,
-              href: "/dashboard",
-            },
-            {
-              id: "calendar",
-              label: "Calendar",
-              icon: CalendarIcon,
-              href: "/dashboard/calendar",
-            },
-            {
-              id: "customers",
-              label: "Customers",
-              icon: Users,
-              href: "/dashboard/customers",
-            },
-            {
-              id: "qr",
-              label: "QR Codes",
-              icon: QrCode,
-              href: "/dashboard/qr",
-            },
-            {
-              id: "settings",
-              label: "Settings",
-              icon: Settings,
-              href: "/dashboard/settings",
-            },
+            { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
+            { id: 'calendar', label: 'Calendar', icon: CalendarIcon, href: '/dashboard/calendar' },
+            { id: 'customers', label: 'Customers', icon: Users, href: '/dashboard/customers' },
+            { id: 'qr', label: 'QR Codes', icon: QrCode, href: '/dashboard/qr' },
+            { id: 'settings', label: 'Settings', icon: Settings, href: '/dashboard/settings' },
           ].map((item) => {
             const Icon = item.icon;
             return (
@@ -118,8 +92,8 @@ export default function CalendarPage() {
                 href={item.href}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                   selectedNav === item.id
-                    ? "bg-gradient-to-r from-yellow-400 to-amber-500 text-black"
-                    : "text-gray-400 hover:bg-white/5 hover:text-white"
+                    ? 'bg-gradient-to-r from-yellow-400 to-amber-500 text-black'
+                    : 'text-gray-400 hover:bg-white/5 hover:text-white'
                 }`}
               >
                 <Icon className="w-5 h-5" />
@@ -130,10 +104,7 @@ export default function CalendarPage() {
         </nav>
 
         <div className="absolute bottom-6 left-6 right-6">
-          <Link
-            href="/"
-            className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-white/5 hover:text-white rounded-xl transition-all w-full"
-          >
+          <Link href="/" className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-white/5 hover:text-white rounded-xl transition-all w-full">
             <LogOut className="w-5 h-5" />
             <span className="font-medium">Logout</span>
           </Link>
@@ -174,10 +145,7 @@ export default function CalendarPage() {
                 <ChevronLeft className="w-5 h-5" />
               </button>
               <h2 className="text-2xl font-bold text-white">
-                {weekDates[0].toLocaleDateString("en-US", {
-                  month: "long",
-                  year: "numeric",
-                })}
+                {weekDates[0].toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
               </h2>
               <button
                 onClick={() => navigateWeek(1)}
@@ -194,10 +162,8 @@ export default function CalendarPage() {
                 className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:border-yellow-400/50 focus:outline-none"
               >
                 <option value="all">All Barbers</option>
-                {mockBarbers.map((barber) => (
-                  <option key={barber.id} value={barber.id}>
-                    {barber.name}
-                  </option>
+                {mockBarbers.map(barber => (
+                  <option key={barber.id} value={barber.id}>{barber.name}</option>
                 ))}
               </select>
             </div>
@@ -210,26 +176,20 @@ export default function CalendarPage() {
               <div className="grid grid-cols-8 gap-2 mb-4">
                 <div className="p-4"></div>
                 {weekDates.map((date, i) => {
-                  const isToday =
-                    date.toISOString().split("T")[0] ===
-                    new Date().toISOString().split("T")[0];
+                  const isToday = date.toISOString().split('T')[0] === new Date().toISOString().split('T')[0];
                   return (
                     <div
                       key={i}
                       className={`p-4 rounded-xl text-center ${
                         isToday
-                          ? "bg-gradient-to-r from-yellow-400 to-amber-500 text-black"
-                          : "bg-white/5 text-white"
+                          ? 'bg-gradient-to-r from-yellow-400 to-amber-500 text-black'
+                          : 'bg-white/5 text-white'
                       }`}
                     >
                       <div className="font-bold">
-                        {date.toLocaleDateString("en-US", { weekday: "short" })}
+                        {date.toLocaleDateString('en-US', { weekday: 'short' })}
                       </div>
-                      <div
-                        className={`text-2xl font-bold ${
-                          isToday ? "text-black" : "text-gray-400"
-                        }`}
-                      >
+                      <div className={`text-2xl font-bold ${isToday ? 'text-black' : 'text-gray-400'}`}>
                         {date.getDate()}
                       </div>
                     </div>
@@ -251,21 +211,15 @@ export default function CalendarPage() {
                           key={dateIdx}
                           className={`p-3 rounded-lg min-h-[80px] ${
                             appointment
-                              ? "bg-gradient-to-r from-yellow-400/20 to-amber-500/20 border border-yellow-400/30"
-                              : "bg-white/5 border border-white/10"
+                              ? 'bg-gradient-to-r from-yellow-400/20 to-amber-500/20 border border-yellow-400/30'
+                              : 'bg-white/5 border border-white/10'
                           } hover:border-yellow-400/50 transition-all cursor-pointer`}
                         >
                           {appointment && (
                             <div>
-                              <p className="font-bold text-white text-sm">
-                                {appointment.customer?.name}
-                              </p>
-                              <p className="text-xs text-gray-400 mt-1">
-                                {appointment.service?.name}
-                              </p>
-                              <p className="text-xs text-yellow-400 mt-1">
-                                {appointment.barber?.name}
-                              </p>
+                              <p className="font-bold text-white text-sm">{appointment.customer?.name}</p>
+                              <p className="text-xs text-gray-400 mt-1">{appointment.service?.name}</p>
+                              <p className="text-xs text-yellow-400 mt-1">{appointment.barber?.name}</p>
                             </div>
                           )}
                         </div>

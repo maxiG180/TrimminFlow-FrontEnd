@@ -205,33 +205,33 @@ export const serviceApi = {
   },
 
   /**
-   * Get all services for a barbershop (non-paginated)
+   * Get all services for a barbershop
    *
    * @param barbershopId - The barbershop's UUID
    * @returns List of all services
    */
-  async getAllNonPaginated(barbershopId: string): Promise<Service[]> {
-    if (!barbershopId || typeof barbershopId !== "string" || barbershopId.length !== 36) {
-      console.error("getAllNonPaginated: Invalid barbershopId", barbershopId);
-      throw new Error("Invalid barbershopId (must be a UUID string)");
-    }
-    console.log("getAllNonPaginated: Sending X-Barbershop-Id header:", barbershopId);
-    try {
-      // Endpoint must be exactly /services/all
-      const response = await apiClient.get<Service[]>('/services/all', {
-        headers: {
-          'X-Barbershop-Id': barbershopId,
-        },
-      });
-      return response.data;
-    } catch (error: any) {
-      if (error.response) {
-        console.error('Backend error:', error.response.status, error.response.data);
-      } else {
-        console.error('Network or unknown error:', error);
-      }
-      throw error;
-    }
+  async getAll(barbershopId: string): Promise<Service[]> {
+    const response = await apiClient.get<Service[]>('/services', {
+      headers: {
+        'X-Barbershop-Id': barbershopId,
+      },
+    });
+    return response.data;
+  },
+
+  /**
+   * Get all active services for a barbershop
+   *
+   * @param barbershopId - The barbershop's UUID
+   * @returns List of active services
+   */
+  async getActive(barbershopId: string): Promise<Service[]> {
+    const response = await apiClient.get<Service[]>('/services/active', {
+      headers: {
+        'X-Barbershop-Id': barbershopId,
+      },
+    });
+    return response.data;
   },
 
   /**
