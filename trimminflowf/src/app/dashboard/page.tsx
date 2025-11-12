@@ -18,7 +18,6 @@ import {
   QrCode,
   LogOut,
 } from 'lucide-react';
-import { mockAppointments, mockBarbers, mockCustomers, mockStats } from '@/lib/mockData';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function Dashboard() {
@@ -45,31 +44,28 @@ export default function Dashboard() {
     );
   }
 
-  // Get today's appointments
-  const today = new Date().toISOString().split('T')[0];
-  const todayAppointments = mockAppointments.filter(apt => apt.appointmentDate === today);
-
+  // Placeholder data - NOT IMPLEMENTED YET
   const statsData = [
     {
       title: "Today's Appointments",
-      value: mockStats.todayAppointments,
-      change: `€${mockStats.weeklyRevenue / 7}`,
+      value: '—',
+      change: 'Not implemented',
       icon: Calendar,
       gradient: 'from-yellow-500 to-amber-600',
       bgGradient: 'from-yellow-500/10 to-amber-600/10',
     },
     {
       title: 'Total Customers',
-      value: mockStats.totalCustomers,
-      change: '+3 new',
+      value: '—',
+      change: 'Not implemented',
       icon: Users,
       gradient: 'from-amber-500 to-yellow-600',
       bgGradient: 'from-amber-500/10 to-yellow-600/10',
     },
     {
       title: 'Weekly Revenue',
-      value: `€${mockStats.weeklyRevenue.toFixed(2)}`,
-      change: '+18%',
+      value: '€—',
+      change: 'Not implemented',
       icon: Euro,
       gradient: 'from-yellow-600 to-amber-700',
       bgGradient: 'from-yellow-600/10 to-amber-700/10',
@@ -219,42 +215,12 @@ export default function Dashboard() {
               </div>
 
               <div className="space-y-3">
-                {todayAppointments.length === 0 ? (
-                  <p className="text-gray-400 text-center py-8">No appointments today</p>
-                ) : (
-                  todayAppointments.map((apt) => (
-                    <div
-                      key={apt.id}
-                      className="p-4 rounded-xl bg-black/20 border border-white/5 hover:border-yellow-400/30 transition-all"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 flex items-center justify-center">
-                            <span className="text-black font-bold">
-                              {apt.customer?.name.charAt(0) || '?'}
-                            </span>
-                          </div>
-                          <div>
-                            <p className="font-bold text-white">{apt.customer?.name || 'Unknown'}</p>
-                            <p className="text-sm text-gray-400">
-                              {apt.service?.name} • {apt.barber?.name}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-bold text-white">{apt.startTime}</p>
-                          <span
-                            className={`inline-block mt-1 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(
-                              apt.status
-                            )}`}
-                          >
-                            {apt.status}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
+                <div className="text-center py-12">
+                  <Calendar className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-400 font-medium mb-2">Appointments System</p>
+                  <p className="text-sm text-gray-500">Not implemented yet</p>
+                  <p className="text-xs text-gray-600 mt-2">Coming in Phase 3</p>
+                </div>
               </div>
             </motion.div>
 
@@ -272,22 +238,17 @@ export default function Dashboard() {
                   Active Barbers
                 </h3>
                 <div className="space-y-3">
-                  {mockBarbers.map((barber) => (
-                    <div key={barber.id} className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 flex items-center justify-center">
-                        <span className="text-black font-bold text-sm">{barber.name.charAt(0)}</span>
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-medium text-white text-sm">{barber.name}</p>
-                        <p className="text-xs text-gray-400">
-                          {barber.isActive ? 'Available' : 'Unavailable'}
-                        </p>
-                      </div>
-                      {barber.isActive && (
-                        <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      )}
-                    </div>
-                  ))}
+                  <div className="text-center py-8">
+                    <Users className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                    <p className="text-gray-400 text-sm mb-1">Barbers Dashboard Widget</p>
+                    <p className="text-xs text-gray-500">Not implemented yet</p>
+                    <Link
+                      href="/dashboard/barbers"
+                      className="text-xs text-yellow-400 hover:underline block mt-2"
+                    >
+                      Go to Barbers Page
+                    </Link>
+                  </div>
                 </div>
               </div>
 
