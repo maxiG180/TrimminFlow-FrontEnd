@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/Button';
@@ -60,8 +61,14 @@ const Navbar: React.FC<NavbarProps> = ({
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {showLogo && (
           <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div className="relative w-10 h-10 bg-gray-800/50 backdrop-blur-xl border-2 border-dashed border-white/20 rounded-lg flex items-center justify-center">
-              <span className="text-xs text-gray-500 font-mono">LOGO</span>
+            <div className="relative w-10 h-10">
+              <Image
+                src="/img/logo.png"
+                alt="TrimminFlow Logo"
+                width={40}
+                height={40}
+                className="object-contain"
+              />
             </div>
             <h1 className="text-2xl font-bold font-heading text-white tracking-wider">TRIMMINFLOW</h1>
           </Link>

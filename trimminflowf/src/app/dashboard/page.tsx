@@ -3,28 +3,20 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import {
   Plus,
-  Users,
-  Euro,
-  Calendar,
-  Clock,
-  Scissors,
-  TrendingUp,
   ArrowUpRight,
-  LayoutDashboard,
-  Settings,
-  QrCode,
-  LogOut,
+  Scissors,
 } from 'lucide-react';
-import { mockAppointments, mockBarbers, mockCustomers, mockStats } from '@/lib/mockData';
+import { mockAppointments, mockBarbers, mockStats } from '@/lib/mockData';
 import { useAuth } from '@/contexts/AuthContext';
+import DashboardSidebar from '@/components/layout/DashboardSidebar';
 
 export default function Dashboard() {
   const router = useRouter();
-  const { user, isAuthenticated, logout } = useAuth();
-  const [selectedNav, setSelectedNav] = useState('dashboard');
+  const { user, isAuthenticated } = useAuth();
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -53,8 +45,8 @@ export default function Dashboard() {
     {
       title: "Today's Appointments",
       value: mockStats.todayAppointments,
-      change: `€${mockStats.weeklyRevenue / 7}`,
-      icon: Calendar,
+      change: `€${(mockStats.weeklyRevenue / 7).toFixed(2)}`,
+      iconSvg: '/svg_custom/schedule-svgrepo-com.svg',
       gradient: 'from-yellow-500 to-amber-600',
       bgGradient: 'from-yellow-500/10 to-amber-600/10',
     },
@@ -62,7 +54,7 @@ export default function Dashboard() {
       title: 'Total Customers',
       value: mockStats.totalCustomers,
       change: '+3 new',
-      icon: Users,
+      iconSvg: '/svg_custom/people-who-support-svgrepo-com.svg',
       gradient: 'from-amber-500 to-yellow-600',
       bgGradient: 'from-amber-500/10 to-yellow-600/10',
     },
@@ -70,7 +62,7 @@ export default function Dashboard() {
       title: 'Weekly Revenue',
       value: `€${mockStats.weeklyRevenue.toFixed(2)}`,
       change: '+18%',
-      icon: Euro,
+      iconSvg: '/svg_custom/euro-banknote-svgrepo-com.svg',
       gradient: 'from-yellow-600 to-amber-700',
       bgGradient: 'from-yellow-600/10 to-amber-700/10',
     },
@@ -90,56 +82,8 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-[#1a1a1a] to-[#2d2d2d]">
-      {/* Sidebar */}
-      <div className="w-64 bg-black/20 backdrop-blur-xl border-r border-white/10 p-6">
-        <div className="flex items-center gap-3 mb-12">
-          <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-xl flex items-center justify-center">
-            <Scissors className="w-5 h-5 text-black" />
-          </div>
-          <div>
-            <h2 className="text-white font-bold">TRIMMINFLOW</h2>
-            <p className="text-xs text-gray-400">Dashboard</p>
-          </div>
-        </div>
-
-        <nav className="space-y-2">
-          {[
-            { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-            { id: 'calendar', label: 'Calendar', icon: Calendar },
-            { id: 'services', label: 'Services', icon: Scissors },
-            { id: 'customers', label: 'Customers', icon: Users },
-            { id: 'qr', label: 'QR Codes', icon: QrCode },
-            { id: 'settings', label: 'Settings', icon: Settings },
-          ].map((item) => {
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.id}
-                href={item.id === 'dashboard' ? '/dashboard' : `/dashboard/${item.id}`}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                  selectedNav === item.id
-                    ? 'bg-gradient-to-r from-yellow-400 to-amber-500 text-black'
-                    : 'text-gray-400 hover:bg-white/5 hover:text-white'
-                }`}
-              >
-                <Icon className="w-5 h-5" />
-                <span className="font-medium">{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div className="absolute bottom-6 left-6 right-6">
-          <button
-            onClick={logout}
-            className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-white/5 hover:text-white rounded-xl transition-all w-full"
-          >
-            <LogOut className="w-5 h-5" />
-            <span className="font-medium">Logout</span>
-          </button>
-        </div>
-      </div>
+    <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">
+      <DashboardSidebar />
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto">
@@ -168,34 +112,46 @@ export default function Dashboard() {
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {statsData.map((stat, index) => {
-              const Icon = stat.icon;
-              return (
-                <motion.div
-                  key={index}
-                  className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-xl border border-white/10 p-6 hover:border-yellow-400/30 transition-all"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ y: -5 }}
-                >
-                  <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${stat.bgGradient} rounded-full blur-2xl`}></div>
-                  <div className="relative z-10">
-                    <div className="flex items-center justify-between mb-4">
-                      <p className="text-gray-400 font-medium">{stat.title}</p>
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${stat.gradient} flex items-center justify-center`}>
-                        <Icon className="w-6 h-6 text-black" />
-                      </div>
-                    </div>
-                    <p className="text-4xl font-bold text-white mb-2">{stat.value}</p>
-                    <p className="text-sm text-gray-400 flex items-center gap-1">
-                      <TrendingUp className="w-4 h-4 text-yellow-400" />
-                      {stat.change}
-                    </p>
+            {statsData.map((stat, index) => (
+              <motion.div
+                key={index}
+                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-xl border border-white/10 p-6 hover:border-yellow-400/40 transition-all cursor-pointer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -8, scale: 1.02 }}
+              >
+                {/* Decorative gradient blob */}
+                <div className={`absolute -top-12 -right-12 w-40 h-40 bg-gradient-to-br ${stat.bgGradient} rounded-full blur-3xl opacity-50 group-hover:opacity-70 transition-opacity`}></div>
+
+                {/* Accent line */}
+                <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${stat.gradient}`}></div>
+
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-6">
+                    <p className="text-gray-300 font-semibold text-sm uppercase tracking-wide">{stat.title}</p>
+                    <Image
+                      src={stat.iconSvg}
+                      alt={stat.title}
+                      width={48}
+                      height={48}
+                      className="w-12 h-12 object-contain group-hover:scale-110 transition-transform"
+                    />
                   </div>
-                </motion.div>
-              );
-            })}
+                  <p className="text-5xl font-black text-white mb-3 tracking-tight">{stat.value}</p>
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-black/30 rounded-lg w-fit">
+                    <Image
+                      src="/svg_custom/euro-banknote-svgrepo-com.svg"
+                      alt="Trending"
+                      width={14}
+                      height={14}
+                      className="w-3.5 h-3.5"
+                    />
+                    <span className="text-xs font-bold text-yellow-400">{stat.change}</span>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
 
           {/* Two Column Layout */}
@@ -208,8 +164,14 @@ export default function Dashboard() {
               transition={{ duration: 0.5, delay: 0.3 }}
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                  <Calendar className="w-6 h-6 text-yellow-400" />
+                <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+                  <Image
+                    src="/svg_custom/clock-svgrepo-com.svg"
+                    alt="Calendar"
+                    width={28}
+                    height={28}
+                    className="w-7 h-7"
+                  />
                   Today's Appointments
                 </h2>
                 <Link href="/dashboard/calendar" className="text-yellow-400 hover:text-yellow-300 text-sm font-medium flex items-center gap-1">
@@ -268,7 +230,13 @@ export default function Dashboard() {
               {/* Active Barbers */}
               <div className="rounded-3xl bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-xl border border-white/10 p-6">
                 <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                  <Scissors className="w-5 h-5 text-yellow-400" />
+                  <Image
+                    src="/img/logo.png"
+                    alt="Barbers"
+                    width={20}
+                    height={20}
+                    className="w-5 h-5"
+                  />
                   Active Barbers
                 </h3>
                 <div className="space-y-3">

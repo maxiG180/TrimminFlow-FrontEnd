@@ -1,5 +1,8 @@
 import { Barbershop } from '@/types';
 import { Service, CreateServiceRequest, UpdateServiceRequest } from '@/types/service';
+import { Barber, BarberResponse, CreateBarberRequest, UpdateBarberRequest } from '@/types/barber';
+import { BusinessHours, BusinessHoursResponse, SetBusinessHoursRequest } from '@/types/businessHours';
+import { PageResponse, PaginationParams } from '@/types/pagination';
 import apiClient from './axios';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
@@ -205,15 +208,41 @@ export const serviceApi = {
   },
 
   /**
-   * Get all services for a barbershop
+   * Get all services for a barbershop (non-paginated)
    *
    * @param barbershopId - The barbershop's UUID
    * @returns List of all services
    */
   async getAll(barbershopId: string): Promise<Service[]> {
-    const response = await apiClient.get<Service[]>('/services', {
+    const response = await apiClient.get<Service[]>('/services/all', {
       headers: {
         'X-Barbershop-Id': barbershopId,
+      },
+    });
+    return response.data;
+  },
+
+  /**
+   * Get services with pagination and optional search
+   *
+   * @param barbershopId - The barbershop's UUID
+   * @param params - Pagination and search parameters
+   * @returns Paginated services
+   */
+  async getPaginated(
+    barbershopId: string,
+    params: PaginationParams = {}
+  ): Promise<PageResponse<Service>> {
+    const { page = 0, size = 10, search, activeOnly = false } = params;
+    const response = await apiClient.get<PageResponse<Service>>('/services', {
+      headers: {
+        'X-Barbershop-Id': barbershopId,
+      },
+      params: {
+        page,
+        size,
+        search: search || undefined,
+        activeOnly,
       },
     });
     return response.data;
@@ -297,6 +326,143 @@ export const serviceApi = {
         'X-Barbershop-Id': barbershopId,
       },
     });
+  },
+};
+
+/**
+ * Barber API
+ *
+ * CRUD operations for managing barbers
+ */
+export const barberApi = {
+  /**
+   * Create a new barber
+   */
+  async create(barbershopId: string, data: CreateBarberRequest): Promise<BarberResponse> {
+    const response = await apiClient.post<BarberResponse>('/barbers', data, {
+      headers: {
+        'X-Barbershop-Id': barbershopId,
+      },
+    });
+    return response.data;
+  },
+
+  /**
+   * Get all barbers (non-paginated)
+   */
+  async getAll(barbershopId: string): Promise<BarberResponse[]> {
+    const response = await apiClient.get<BarberResponse[]>('/barbers/all', {
+      headers: {
+        'X-Barbershop-Id': barbershopId,
+      },
+    });
+    return response.data;
+  },
+
+  /**
+   * Get barbers with pagination and optional search
+   */
+  async getPaginated(
+    barbershopId: string,
+    params: PaginationParams = {}
+  ): Promise<PageResponse<BarberResponse>> {
+    const { page = 0, size = 10, search, activeOnly = false } = params;
+    const response = await apiClient.get<PageResponse<BarberResponse>>('/barbers', {
+      headers: {
+        'X-Barbershop-Id': barbershopId,
+      },
+      params: {
+        page,
+        size,
+        search: search || undefined,
+        activeOnly,
+      },
+    });
+    return response.data;
+  },
+
+  /**
+   * Get a specific barber by ID
+   */
+  async getById(barbershopId: string, barberId: string): Promise<BarberResponse> {
+    const response = await apiClient.get<BarberResponse>(`/barbers/${barberId}`, {
+      headers: {
+        'X-Barbershop-Id': barbershopId,
+      },
+    });
+    return response.data;
+  },
+
+  /**
+   * Update an existing barber
+   */
+  async update(
+    barbershopId: string,
+    barberId: string,
+    data: UpdateBarberRequest
+  ): Promise<BarberResponse> {
+    const response = await apiClient.put<BarberResponse>(`/barbers/${barberId}`, data, {
+      headers: {
+        'X-Barbershop-Id': barbershopId,
+      },
+    });
+    return response.data;
+  },
+
+  /**
+   * Delete a barber (soft delete)
+   */
+  async delete(barbershopId: string, barberId: string): Promise<void> {
+    await apiClient.delete(`/barbers/${barberId}`, {
+      headers: {
+        'X-Barbershop-Id': barbershopId,
+      },
+    });
+  },
+
+  /**
+   * Permanently delete a barber
+   */
+  async hardDelete(barbershopId: string, barberId: string): Promise<void> {
+    await apiClient.delete(`/barbers/${barberId}/hard`, {
+      headers: {
+        'X-Barbershop-Id': barbershopId,
+      },
+    });
+  },
+};
+
+/**
+ * Business Hours API
+ *
+ * Manage shop opening hours
+ */
+export const businessHoursApi = {
+  /**
+   * Set business hours for a specific day
+   */
+  async setHours(
+    barbershopId: string,
+    data: SetBusinessHoursRequest
+  ): Promise<BusinessHoursResponse> {
+    const response = await apiClient.post<BusinessHoursResponse>('/business-hours', data, {
+      headers: {
+        'X-Barbershop-Id': barbershopId,
+      },
+    });
+    return response.data;
+  },
+
+  /**
+   * Get all business hours for the barbershop
+   */
+  async getAll(barbershopId: string): Promise<BusinessHoursResponse[]> {
+    const response = await apiClient.get<BusinessHoursResponse[]>('/business-hours', {
+      headers: {
+        'X-Barbershop-Id': barbershopId,
+      },
+    });
+    return response.data;
   },
 };
 
