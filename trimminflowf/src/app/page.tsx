@@ -111,7 +111,7 @@ export default function Home() {
               transition={{ duration: 0.8 }}
             >
               <div className="inline-block bg-yellow-400/20 text-yellow-400 border border-yellow-400/30 rounded-full px-3 sm:px-4 py-1 mb-4 sm:mb-6 text-xs sm:text-sm">
-                Trusted by 5,000+ barbershops worldwide
+                Serving barbershops worldwide
               </div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold font-heading mb-4 sm:mb-6 tracking-tight">
                 Modernize Your
@@ -199,7 +199,11 @@ export default function Home() {
                   alt={feature.title}
                   width={64}
                   height={64}
-                  className="w-12 h-12 sm:w-16 sm:h-16 object-contain mb-4 sm:mb-6 group-hover:scale-110 transition-transform"
+                  className={`object-contain mb-4 sm:mb-6 group-hover:scale-110 transition-transform ${
+                    feature.iconSvg.includes('people-who-support')
+                      ? 'w-14 h-14 sm:w-20 sm:h-20'
+                      : 'w-12 h-12 sm:w-16 sm:h-16'
+                  }`}
                 />
                 <h3 className="text-xl sm:text-2xl font-bold font-heading mb-3 sm:mb-4 tracking-wide">
                   {feature.title}
@@ -291,7 +295,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="py-12 px-6 border-t border-white/10">
         <div className="max-w-7xl mx-auto text-center text-gray-400">
-          <p>&copy; 2024 TRIMMINFLOW. All rights reserved.</p>
+          <p>&copy; 2025 TRIMMINFLOW. All rights reserved.</p>
         </div>
       </footer>
     </div>

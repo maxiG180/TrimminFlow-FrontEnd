@@ -87,65 +87,69 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto">
-        <div className="p-8 space-y-8">
+        <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 pt-20 lg:pt-8">
           {/* Header */}
           <motion.div
-            className="flex items-center justify-between"
+            className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
             <div>
-              <h1 className="text-5xl font-bold bg-gradient-to-r from-white via-gray-100 to-yellow-200 bg-clip-text text-transparent mb-2">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-white via-gray-100 to-yellow-200 bg-clip-text text-transparent mb-1 sm:mb-2">
                 Welcome back, {user.firstName}!
               </h1>
-              <p className="text-gray-400 text-lg">Here's what's happening with your barbershop today.</p>
+              <p className="text-gray-400 text-sm sm:text-base lg:text-lg">Here's what's happening with your barbershop today.</p>
             </div>
             <Link
               href="/dashboard/appointments/new"
-              className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-black rounded-xl hover:from-yellow-500 hover:to-amber-600 transition-all flex items-center gap-2 font-medium"
+              className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-black rounded-xl hover:from-yellow-500 hover:to-amber-600 transition-all flex items-center justify-center gap-2 font-medium text-sm sm:text-base whitespace-nowrap"
             >
-              <Plus className="w-5 h-5" />
+              <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
               New Appointment
             </Link>
           </motion.div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {statsData.map((stat, index) => (
               <motion.div
                 key={index}
-                className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-xl border border-white/10 p-6 hover:border-yellow-400/40 transition-all cursor-pointer"
+                className="group relative overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-xl border border-white/10 p-4 sm:p-6 hover:border-yellow-400/40 transition-all cursor-pointer"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -8, scale: 1.02 }}
+                whileHover={{ y: -4, scale: 1.01 }}
               >
                 {/* Decorative gradient blob */}
-                <div className={`absolute -top-12 -right-12 w-40 h-40 bg-gradient-to-br ${stat.bgGradient} rounded-full blur-3xl opacity-50 group-hover:opacity-70 transition-opacity`}></div>
+                <div className={`absolute -top-12 -right-12 w-32 h-32 sm:w-40 sm:h-40 bg-gradient-to-br ${stat.bgGradient} rounded-full blur-3xl opacity-50 group-hover:opacity-70 transition-opacity`}></div>
 
                 {/* Accent line */}
                 <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${stat.gradient}`}></div>
 
                 <div className="relative z-10">
-                  <div className="flex items-center justify-between mb-6">
-                    <p className="text-gray-300 font-semibold text-sm uppercase tracking-wide">{stat.title}</p>
+                  <div className="flex items-center justify-between mb-4 sm:mb-6">
+                    <p className="text-gray-300 font-semibold text-xs sm:text-sm uppercase tracking-wide">{stat.title}</p>
                     <Image
                       src={stat.iconSvg}
                       alt={stat.title}
                       width={48}
                       height={48}
-                      className="w-12 h-12 object-contain group-hover:scale-110 transition-transform"
+                      className={`object-contain group-hover:scale-110 transition-transform ${
+                        stat.iconSvg.includes('people-who-support')
+                          ? 'w-12 h-12 sm:w-16 sm:h-16'
+                          : 'w-10 h-10 sm:w-12 sm:h-12'
+                      }`}
                     />
                   </div>
-                  <p className="text-5xl font-black text-white mb-3 tracking-tight">{stat.value}</p>
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-black/30 rounded-lg w-fit">
+                  <p className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-2 sm:mb-3 tracking-tight">{stat.value}</p>
+                  <div className="flex items-center gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 bg-black/30 rounded-lg w-fit">
                     <Image
                       src="/svg_custom/euro-banknote-svgrepo-com.svg"
                       alt="Trending"
                       width={14}
                       height={14}
-                      className="w-3.5 h-3.5"
+                      className="w-3 h-3 sm:w-3.5 sm:h-3.5"
                     />
                     <span className="text-xs font-bold text-yellow-400">{stat.change}</span>
                   </div>
@@ -155,10 +159,10 @@ export default function Dashboard() {
           </div>
 
           {/* Two Column Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
             {/* Today's Appointments */}
             <motion.div
-              className="lg:col-span-2 rounded-3xl bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-xl border border-white/10 p-6"
+              className="lg:col-span-2 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-xl border border-white/10 p-4 sm:p-6"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
