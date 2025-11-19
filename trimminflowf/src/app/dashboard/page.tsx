@@ -28,7 +28,7 @@ export default function Dashboard() {
   // Show loading state while checking auth
   if (!isAuthenticated || !user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#1a1a1a] to-[#2d2d2d] flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-[#1a1a1a] to-[#2d2d2d] flex items-center justify-center" suppressHydrationWarning>
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400 mx-auto"></div>
           <p className="mt-4 text-gray-400">Loading...</p>
@@ -82,7 +82,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">
+    <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800" suppressHydrationWarning>
       <DashboardSidebar />
 
       {/* Main Content */}

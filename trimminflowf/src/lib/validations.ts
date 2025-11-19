@@ -66,6 +66,12 @@ export const createBarberSchema = z.object({
     .max(500, 'Bio must be less than 500 characters')
     .optional()
     .or(z.literal('')),
+  profileImageUrl: z
+    .string()
+    .url('Please enter a valid URL')
+    .max(500, 'Image URL must be less than 500 characters')
+    .optional()
+    .or(z.literal('')),
 });
 
 export const updateBarberSchema = createBarberSchema

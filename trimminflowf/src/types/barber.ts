@@ -6,6 +6,7 @@ export interface Barber {
   email?: string;
   phone?: string;
   bio?: string;
+  profileImageUrl?: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -17,6 +18,7 @@ export interface CreateBarberRequest {
   email?: string;
   phone?: string;
   bio?: string;
+  profileImageUrl?: string;
 }
 
 export interface UpdateBarberRequest {
@@ -25,6 +27,7 @@ export interface UpdateBarberRequest {
   email?: string;
   phone?: string;
   bio?: string;
+  profileImageUrl?: string;
   isActive?: boolean;
 }
 

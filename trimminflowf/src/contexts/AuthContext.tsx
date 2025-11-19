@@ -56,14 +56,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   /**
    * Check authentication status on mount
-   * Load user data from localStorage (not sensitive, just UI state)
+   * Load user data from localStorage AND validate token with backend
+   *
+   * 🔒 SECURITY: Validates that the httpOnly cookie token is still valid
+   * This prevents stale localStorage data from showing an authenticated state
+   * when the token has actually expired
    */
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
-          setUser(JSON.parse(storedUser));
+          // We have user data, but need to verify the token is still valid
+          try {
+            // Make a test request to validate the token
+            const response = await fetch('http://localhost:8080/api/v1/auth/validate', {
+              method: 'GET',
+              credentials: 'include', // Send the httpOnly cookie
+            });
+
+            if (response.ok) {
+              // Token is valid, user is authenticated
+              setUser(JSON.parse(storedUser));
+            } else {
+              // Token is invalid/expired, clear user data
+              console.warn('Token validation failed, clearing user data');
+              localStorage.removeItem('user');
+              setUser(null);
+            }
+          } catch (error) {
+            // Network error or validation endpoint doesn't exist yet
+            // Fall back to trusting localStorage (backward compatible)
+            console.warn('Token validation failed, using localStorage fallback:', error);
+            setUser(JSON.parse(storedUser));
+          }
         }
       } catch (error) {
         console.error('Failed to load user data:', error);

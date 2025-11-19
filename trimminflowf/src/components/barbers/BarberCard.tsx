@@ -12,9 +12,25 @@ export function BarberCard({ barber, onEdit, onDelete }: BarberCardProps) {
   return (
     <div className="bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-yellow-400/30 transition-all">
       <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full flex items-center justify-center">
-            <User className="w-6 h-6 text-black" />
+        <div className="flex items-center gap-4">
+          {barber.profileImageUrl ? (
+            <img
+              src={barber.profileImageUrl}
+              alt={barber.fullName}
+              className="w-20 h-20 rounded-full object-cover border-2 border-yellow-400/30"
+              onError={(e) => {
+                // Fallback to default icon if image fails to load
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.nextElementSibling?.classList.remove('hidden');
+              }}
+            />
+          ) : null}
+          <div
+            className={`w-20 h-20 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full flex items-center justify-center ${
+              barber.profileImageUrl ? 'hidden' : ''
+            }`}
+          >
+            <User className="w-10 h-10 text-black" />
           </div>
           <div>
             <h3 className="text-lg font-semibold text-white">{barber.fullName}</h3>

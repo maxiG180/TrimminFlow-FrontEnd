@@ -7,16 +7,10 @@ import {
   ChevronLeft,
   ChevronRight,
   Plus,
-  Calendar as CalendarIcon,
-  Scissors,
-  LayoutDashboard,
-  Users,
-  QrCode,
-  Settings,
-  LogOut,
 } from 'lucide-react';
+import DashboardSidebar from '@/components/layout/DashboardSidebar';
+
 export default function CalendarPage() {
-  const [selectedNav, setSelectedNav] = useState('calendar');
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedBarber, setSelectedBarber] = useState('all');
 
@@ -64,52 +58,8 @@ export default function CalendarPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-[#1a1a1a] to-[#2d2d2d]">
-      {/* Sidebar */}
-      <div className="w-64 bg-black/20 backdrop-blur-xl border-r border-white/10 p-6">
-        <div className="flex items-center gap-3 mb-12">
-          <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-xl flex items-center justify-center">
-            <Scissors className="w-5 h-5 text-black" />
-          </div>
-          <div>
-            <h2 className="text-white font-bold">TRIMMINFLOW</h2>
-            <p className="text-xs text-gray-400">Calendar</p>
-          </div>
-        </div>
-
-        <nav className="space-y-2">
-          {[
-            { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
-            { id: 'calendar', label: 'Calendar', icon: CalendarIcon, href: '/dashboard/calendar' },
-            { id: 'customers', label: 'Customers', icon: Users, href: '/dashboard/customers' },
-            { id: 'qr', label: 'QR Codes', icon: QrCode, href: '/dashboard/qr' },
-            { id: 'settings', label: 'Settings', icon: Settings, href: '/dashboard/settings' },
-          ].map((item) => {
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.id}
-                href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                  selectedNav === item.id
-                    ? 'bg-gradient-to-r from-yellow-400 to-amber-500 text-black'
-                    : 'text-gray-400 hover:bg-white/5 hover:text-white'
-                }`}
-              >
-                <Icon className="w-5 h-5" />
-                <span className="font-medium">{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div className="absolute bottom-6 left-6 right-6">
-          <Link href="/" className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-white/5 hover:text-white rounded-xl transition-all w-full">
-            <LogOut className="w-5 h-5" />
-            <span className="font-medium">Logout</span>
-          </Link>
-        </div>
-      </div>
+    <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">
+      <DashboardSidebar />
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto">

@@ -6,6 +6,7 @@ import { BarberResponse } from '@/types/barber';
 import { Input } from '@/components/ui/Input';
 import { TextArea } from '@/components/ui/TextArea';
 import { Button } from '@/components/ui/Button';
+import { CloudinaryUpload } from '@/components/ui/CloudinaryUpload';
 import { X } from 'lucide-react';
 
 interface BarberFormProps {
@@ -19,6 +20,8 @@ export function BarberForm({ onSubmit, onCancel, initialData, isLoading = false 
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<CreateBarberFormData | UpdateBarberFormData>({
     resolver: zodResolver(initialData ? updateBarberSchema : createBarberSchema) as any,
@@ -29,6 +32,7 @@ export function BarberForm({ onSubmit, onCancel, initialData, isLoading = false 
           email: initialData.email || '',
           phone: initialData.phone || '',
           bio: initialData.bio || '',
+          profileImageUrl: initialData.profileImageUrl || '',
         }
       : {
           firstName: '',
@@ -36,8 +40,19 @@ export function BarberForm({ onSubmit, onCancel, initialData, isLoading = false 
           email: '',
           phone: '',
           bio: '',
+          profileImageUrl: '',
         },
   });
+
+  const profileImageUrl = watch('profileImageUrl');
+
+  const handleImageUpload = (url: string) => {
+    setValue('profileImageUrl', url, { shouldValidate: true });
+  };
+
+  const handleImageRemove = () => {
+    setValue('profileImageUrl', '', { shouldValidate: true });
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -97,6 +112,30 @@ export function BarberForm({ onSubmit, onCancel, initialData, isLoading = false 
             placeholder="Tell us about this barber..."
             rows={3}
           />
+
+          {/* Cloudinary Upload Widget */}
+          <CloudinaryUpload
+            onUploadSuccess={handleImageUpload}
+            currentImageUrl={profileImageUrl}
+            onRemove={handleImageRemove}
+          />
+
+          {/* Manual URL Input (Alternative/Fallback) */}
+          <details className="text-sm">
+            <summary className="cursor-pointer text-gray-400 hover:text-gray-300 mb-2">
+              Or enter image URL manually
+            </summary>
+            <div className="mt-2">
+              <Input
+                label="Profile Image URL"
+                type="url"
+                {...register('profileImageUrl')}
+                error={errors.profileImageUrl?.message}
+                placeholder="https://example.com/image.jpg"
+                helperText="Paste an image URL from any source"
+              />
+            </div>
+          </details>
 
           <div className="flex gap-3 pt-4">
             <Button type="submit" disabled={isLoading} className="flex-1">
