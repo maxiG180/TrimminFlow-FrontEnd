@@ -10,7 +10,6 @@ import {
   ArrowUpRight,
   Scissors,
 } from 'lucide-react';
-import { mockAppointments, mockBarbers, mockStats } from '@/lib/mockData';
 import { useAuth } from '@/contexts/AuthContext';
 import DashboardSidebar from '@/components/layout/DashboardSidebar';
 
@@ -37,31 +36,31 @@ export default function Dashboard() {
     );
   }
 
-  // Get today's appointments
-  const today = new Date().toISOString().split('T')[0];
-  const todayAppointments = mockAppointments.filter(apt => apt.appointmentDate === today);
+  // TODO: Fetch real data from API
+  const todayAppointments: any[] = [];
+  const activeBarbers: any[] = [];
 
   const statsData = [
     {
       title: "Today's Appointments",
-      value: mockStats.todayAppointments,
-      change: `€${(mockStats.weeklyRevenue / 7).toFixed(2)}`,
+      value: '0',
+      change: '€0.00',
       iconSvg: '/svg_custom/schedule-svgrepo-com.svg',
       gradient: 'from-yellow-500 to-amber-600',
       bgGradient: 'from-yellow-500/10 to-amber-600/10',
     },
     {
       title: 'Total Customers',
-      value: mockStats.totalCustomers,
-      change: '+3 new',
+      value: '0',
+      change: '+0 new',
       iconSvg: '/svg_custom/people-who-support-svgrepo-com.svg',
       gradient: 'from-amber-500 to-yellow-600',
       bgGradient: 'from-amber-500/10 to-yellow-600/10',
     },
     {
       title: 'Weekly Revenue',
-      value: `€${mockStats.weeklyRevenue.toFixed(2)}`,
-      change: '+18%',
+      value: '€0.00',
+      change: '+0%',
       iconSvg: '/svg_custom/euro-banknote-svgrepo-com.svg',
       gradient: 'from-yellow-600 to-amber-700',
       bgGradient: 'from-yellow-600/10 to-amber-700/10',
@@ -185,42 +184,7 @@ export default function Dashboard() {
               </div>
 
               <div className="space-y-3">
-                {todayAppointments.length === 0 ? (
-                  <p className="text-gray-400 text-center py-8">No appointments today</p>
-                ) : (
-                  todayAppointments.map((apt) => (
-                    <div
-                      key={apt.id}
-                      className="p-4 rounded-xl bg-black/20 border border-white/5 hover:border-yellow-400/30 transition-all"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 flex items-center justify-center">
-                            <span className="text-black font-bold">
-                              {apt.customer?.name.charAt(0) || '?'}
-                            </span>
-                          </div>
-                          <div>
-                            <p className="font-bold text-white">{apt.customer?.name || 'Unknown'}</p>
-                            <p className="text-sm text-gray-400">
-                              {apt.service?.name} • {apt.barber?.name}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-bold text-white">{apt.startTime}</p>
-                          <span
-                            className={`inline-block mt-1 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(
-                              apt.status
-                            )}`}
-                          >
-                            {apt.status}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
+                <p className="text-gray-400 text-center py-8">No appointments scheduled yet</p>
               </div>
             </motion.div>
 
@@ -244,22 +208,7 @@ export default function Dashboard() {
                   Active Barbers
                 </h3>
                 <div className="space-y-3">
-                  {mockBarbers.map((barber) => (
-                    <div key={barber.id} className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 flex items-center justify-center">
-                        <span className="text-black font-bold text-sm">{barber.name.charAt(0)}</span>
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-medium text-white text-sm">{barber.name}</p>
-                        <p className="text-xs text-gray-400">
-                          {barber.isActive ? 'Available' : 'Unavailable'}
-                        </p>
-                      </div>
-                      {barber.isActive && (
-                        <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      )}
-                    </div>
-                  ))}
+                  <p className="text-gray-400 text-center py-4 text-sm">No barbers added yet</p>
                 </div>
               </div>
 
