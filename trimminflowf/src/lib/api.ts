@@ -88,7 +88,12 @@ export const barbershopApi = {
       const response = await fetch(`${API_BASE_URL}/barbershops`);
 
       if (!response.ok) {
-        throw new ApiError(response.status, 'Failed to fetch barbershops');
+        const errorData = await response.json().catch(() => ({}));
+        throw new ApiError(
+          response.status,
+          errorData.message || `Failed to fetch barbershops: ${response.statusText}`,
+          errorData
+        );
       }
 
       return await response.json();
@@ -108,7 +113,12 @@ export const barbershopApi = {
       const response = await fetch(`${API_BASE_URL}/barbershops/${id}`);
 
       if (!response.ok) {
-        throw new ApiError(response.status, 'Failed to fetch barbershop');
+        const errorData = await response.json().catch(() => ({}));
+        throw new ApiError(
+          response.status,
+          errorData.message || `Failed to fetch barbershop: ${response.statusText}`,
+          errorData
+        );
       }
 
       return await response.json();
