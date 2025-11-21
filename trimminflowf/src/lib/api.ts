@@ -441,6 +441,20 @@ export const barberApi = {
       },
     });
   },
+  /**
+   * Get all active barbers (paginated, but we'll fetch a large page for the UI)
+   */
+  async getActive(barbershopId: string): Promise<BarberResponse[]> {
+    const response = await apiClient.get<PageResponse<BarberResponse>>('/barbers/active', {
+      headers: {
+        'X-Barbershop-Id': barbershopId,
+      },
+      params: {
+        size: 100, // Fetch enough for the UI
+      },
+    });
+    return response.data.content;
+  },
 };
 
 /**
