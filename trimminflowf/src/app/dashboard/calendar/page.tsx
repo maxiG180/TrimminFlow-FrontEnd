@@ -107,12 +107,12 @@ export default function CalendarPage() {
   };
 
   const getStatusColor = (status: AppointmentStatus) => {
-    const colors = {
-      PENDING: 'from-yellow-400/20 to-amber-500/20 border-yellow-400/30',
-      CONFIRMED: 'from-green-400/20 to-emerald-500/20 border-green-400/30',
-      CANCELLED: 'from-red-400/20 to-rose-500/20 border-red-400/30',
-      COMPLETED: 'from-blue-400/20 to-cyan-500/20 border-blue-400/30',
-      NO_SHOW: 'from-gray-400/20 to-slate-500/20 border-gray-400/30',
+    const colors: Record<AppointmentStatus, string> = {
+      [AppointmentStatus.PENDING]: 'from-yellow-400/20 to-amber-500/20 border-yellow-400/30',
+      [AppointmentStatus.CONFIRMED]: 'from-green-400/20 to-emerald-500/20 border-green-400/30',
+      [AppointmentStatus.CANCELLED]: 'from-red-400/20 to-rose-500/20 border-red-400/30',
+      [AppointmentStatus.COMPLETED]: 'from-blue-400/20 to-cyan-500/20 border-blue-400/30',
+      [AppointmentStatus.NO_SHOW]: 'from-gray-400/20 to-slate-500/20 border-gray-400/30',
     };
     return colors[status] || colors.PENDING;
   };
@@ -211,9 +211,9 @@ export default function CalendarPage() {
               onChange={(e) => setSelectedBarber(e.target.value)}
               className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white focus:border-yellow-400/50 focus:outline-none"
             >
-              <option value="all">All Barbers</option>
+              <option value="all" className="bg-gray-800 text-white">All Barbers</option>
               {barbers.map(barber => (
-                <option key={barber.id} value={barber.id}>
+                <option key={barber.id} value={barber.id} className="bg-gray-800 text-white">
                   {barber.firstName} {barber.lastName}
                 </option>
               ))}
@@ -232,8 +232,8 @@ export default function CalendarPage() {
                     <div
                       key={i}
                       className={`p-4 rounded-xl text-center ${isToday
-                          ? 'bg-gradient-to-r from-yellow-400 to-amber-500 text-black'
-                          : 'bg-white/5 text-white'
+                        ? 'bg-gradient-to-r from-yellow-400 to-amber-500 text-black'
+                        : 'bg-white/5 text-white'
                         }`}
                     >
                       <div className="font-bold">{format(date, 'EEE')}</div>
@@ -258,8 +258,8 @@ export default function CalendarPage() {
                         <div
                           key={dateIdx}
                           className={`p-3 rounded-lg min-h-[80px] ${slotAppointments.length > 0
-                              ? `bg-gradient-to-r ${getStatusColor(slotAppointments[0].status)} border`
-                              : 'bg-white/5 border border-white/10'
+                            ? `bg-gradient-to-r ${getStatusColor(slotAppointments[0].status)} border`
+                            : 'bg-white/5 border border-white/10'
                             } hover:border-yellow-400/50 transition-all cursor-pointer`}
                           onClick={() => slotAppointments[0] && setSelectedAppointment(slotAppointments[0])}
                         >
@@ -310,9 +310,9 @@ export default function CalendarPage() {
                   onChange={(e) => setFormData({ ...formData, barberId: e.target.value })}
                   className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-yellow-400/50 focus:outline-none"
                 >
-                  <option value="">Select barber</option>
+                  <option value="" className="bg-gray-800 text-white">Select barber</option>
                   {barbers.map((barber) => (
-                    <option key={barber.id} value={barber.id}>
+                    <option key={barber.id} value={barber.id} className="bg-gray-800 text-white">
                       {barber.firstName} {barber.lastName}
                     </option>
                   ))}
@@ -327,9 +327,9 @@ export default function CalendarPage() {
                   onChange={(e) => setFormData({ ...formData, serviceId: e.target.value })}
                   className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-yellow-400/50 focus:outline-none"
                 >
-                  <option value="">Select service</option>
+                  <option value="" className="bg-gray-800 text-white">Select service</option>
                   {services.map((service) => (
-                    <option key={service.id} value={service.id}>
+                    <option key={service.id} value={service.id} className="bg-gray-800 text-white">
                       {service.name} ({service.durationMinutes} min - ${service.price})
                     </option>
                   ))}
