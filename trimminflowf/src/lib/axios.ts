@@ -70,8 +70,8 @@ apiClient.interceptors.response.use(
       const errorData = error.response.data as any;
       const status = error.response.status;
 
-      // Handle 401 Unauthorized
-      if (status === 401) {
+      // Handle 401 Unauthorized or 403 Forbidden (invalid session)
+      if (status === 401 || status === 403) {
         if (typeof window !== 'undefined') {
           window.dispatchEvent(new CustomEvent('auth:unauthorized'));
         }
