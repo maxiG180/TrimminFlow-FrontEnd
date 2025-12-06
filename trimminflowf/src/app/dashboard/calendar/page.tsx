@@ -39,6 +39,51 @@ export default function CalendarPage() {
     }
   }, [user, currentDate, selectedBarber]);
 
+  // WebSocket Connection
+  useEffect(() => {
+    // Dynamically import SockJS to avoid SSR issues
+    import('sockjs-client').then((SockJS) => {
+      import('@stomp/stompjs').then(({ Client }) => {
+        const socket = new SockJS.default('http://localhost:8080/ws');
+        const stompClient = new Client({
+          webSocketFactory: () => socket,
+          onConnect: () => {
+            console.log('Connected to WebSocket');
+            stompClient.subscribe('/topic/appointments', (message) => {
+              const updatedAppointment: Appointment = JSON.parse(message.body);
+              
+              // Only update if it belongs to the current view (optional check)
+              // But for simplicity, we'll just reload data or update the list
+              // Let's update the list directly for "live" feel
+              setAppointments((prev) => {
+                const index = prev.findIndex(a => a.id === updatedAppointment.id);
+                if (index !== -1) {
+                  // Update existing
+                  const newArr = [...prev];
+                  newArr[index] = updatedAppointment;
+                  return newArr;
+                } else {
+                  // Add new
+                  return [...prev, updatedAppointment];
+                }
+              });
+            });
+          },
+          onStompError: (frame) => {
+            console.error('Broker reported error: ' + frame.headers['message']);
+            console.error('Additional details: ' + frame.body);
+          },
+        });
+
+        stompClient.activate();
+
+        return () => {
+          stompClient.deactivate();
+        };
+      });
+    });
+  }, []);
+
   const loadData = async () => {
     if (!user?.barbershopId) return;
 
