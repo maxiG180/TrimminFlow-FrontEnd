@@ -39,9 +39,9 @@ export default function CalendarPage() {
     }
   }, [user, currentDate, selectedBarber]);
 
-  // WebSocket Connection
+  // websocket connection setup
   useEffect(() => {
-    // Dynamically import SockJS to avoid SSR issues
+    // import sockjs dynamically so it works with nextjs
     import('sockjs-client').then((SockJS) => {
       import('@stomp/stompjs').then(({ Client }) => {
         const socket = new SockJS.default('http://localhost:8080/ws');
@@ -51,19 +51,17 @@ export default function CalendarPage() {
             console.log('Connected to WebSocket');
             stompClient.subscribe('/topic/appointments', (message) => {
               const updatedAppointment: Appointment = JSON.parse(message.body);
-              
-              // Only update if it belongs to the current view (optional check)
-              // But for simplicity, we'll just reload data or update the list
-              // Let's update the list directly for "live" feel
+
+              // update the list immediately when we get a message
               setAppointments((prev) => {
                 const index = prev.findIndex(a => a.id === updatedAppointment.id);
                 if (index !== -1) {
-                  // Update existing
+                  // update existing appointment
                   const newArr = [...prev];
                   newArr[index] = updatedAppointment;
                   return newArr;
                 } else {
-                  // Add new
+                  // add new appointment
                   return [...prev, updatedAppointment];
                 }
               });

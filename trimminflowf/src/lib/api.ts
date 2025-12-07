@@ -349,10 +349,20 @@ export const barberApi = {
   /**
    * Create a new barber
    */
-  async create(barbershopId: string, data: CreateBarberRequest): Promise<BarberResponse> {
-    const response = await apiClient.post<BarberResponse>('/barbers', data, {
+  async create(barbershopId: string, data: CreateBarberRequest & { image?: File }): Promise<BarberResponse> {
+    const formData = new FormData();
+    formData.append('firstName', data.firstName);
+    formData.append('lastName', data.lastName);
+    if (data.email) formData.append('email', data.email);
+    if (data.phone) formData.append('phone', data.phone);
+    if (data.bio) formData.append('bio', data.bio);
+    if (data.profileImageUrl) formData.append('profileImageUrl', data.profileImageUrl);
+    if (data.image) formData.append('image', data.image);
+
+    const response = await apiClient.post<BarberResponse>('/barbers', formData, {
       headers: {
         'X-Barbershop-Id': barbershopId,
+        'Content-Type': 'multipart/form-data',
       },
     });
     return response.data;
@@ -410,11 +420,22 @@ export const barberApi = {
   async update(
     barbershopId: string,
     barberId: string,
-    data: UpdateBarberRequest
+    data: UpdateBarberRequest & { image?: File }
   ): Promise<BarberResponse> {
-    const response = await apiClient.put<BarberResponse>(`/barbers/${barberId}`, data, {
+    const formData = new FormData();
+    if (data.firstName) formData.append('firstName', data.firstName);
+    if (data.lastName) formData.append('lastName', data.lastName);
+    if (data.email !== undefined) formData.append('email', data.email || '');
+    if (data.phone !== undefined) formData.append('phone', data.phone || '');
+    if (data.bio !== undefined) formData.append('bio', data.bio || '');
+    if (data.profileImageUrl !== undefined) formData.append('profileImageUrl', data.profileImageUrl || '');
+    if (data.isActive !== undefined) formData.append('isActive', String(data.isActive));
+    if (data.image) formData.append('image', data.image);
+
+    const response = await apiClient.put<BarberResponse>(`/barbers/${barberId}`, formData, {
       headers: {
         'X-Barbershop-Id': barbershopId,
+        'Content-Type': 'multipart/form-data',
       },
     });
     return response.data;

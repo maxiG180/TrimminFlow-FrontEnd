@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createBarberSchema, CreateBarberFormData, updateBarberSchema, UpdateBarberFormData } from '@/lib/validations';
@@ -6,17 +6,19 @@ import { BarberResponse } from '@/types/barber';
 import { Input } from '@/components/ui/Input';
 import { TextArea } from '@/components/ui/TextArea';
 import { Button } from '@/components/ui/Button';
-import { CloudinaryUpload } from '@/components/ui/CloudinaryUpload';
-import { X } from 'lucide-react';
+import { X, Upload } from 'lucide-react';
 
 interface BarberFormProps {
-  onSubmit: (data: CreateBarberFormData | UpdateBarberFormData) => Promise<void>;
+  onSubmit: (data: (CreateBarberFormData | UpdateBarberFormData) & { image?: File }) => Promise<void>;
   onCancel: () => void;
   initialData?: BarberResponse;
   isLoading?: boolean;
 }
 
 export function BarberForm({ onSubmit, onCancel, initialData, isLoading = false }: BarberFormProps) {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.profileImageUrl || null);
+
   const {
     register,
     handleSubmit,
@@ -27,31 +29,33 @@ export function BarberForm({ onSubmit, onCancel, initialData, isLoading = false 
     resolver: zodResolver(initialData ? updateBarberSchema : createBarberSchema) as any,
     defaultValues: initialData
       ? {
-          firstName: initialData.firstName,
-          lastName: initialData.lastName,
-          email: initialData.email || '',
-          phone: initialData.phone || '',
-          bio: initialData.bio || '',
-          profileImageUrl: initialData.profileImageUrl || '',
-        }
+        firstName: initialData.firstName,
+        lastName: initialData.lastName,
+        email: initialData.email || '',
+        phone: initialData.phone || '',
+        bio: initialData.bio || '',
+        profileImageUrl: initialData.profileImageUrl || '',
+      }
       : {
-          firstName: '',
-          lastName: '',
-          email: '',
-          phone: '',
-          bio: '',
-          profileImageUrl: '',
-        },
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        bio: '',
+        profileImageUrl: '',
+      },
   });
 
-  const profileImageUrl = watch('profileImageUrl');
-
-  const handleImageUpload = (url: string) => {
-    setValue('profileImageUrl', url, { shouldValidate: true });
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
   };
 
-  const handleImageRemove = () => {
-    setValue('profileImageUrl', '', { shouldValidate: true });
+  const onFormSubmit = (data: CreateBarberFormData | UpdateBarberFormData) => {
+    onSubmit({ ...data, image: selectedFile || undefined });
   };
 
   return (
@@ -70,7 +74,7 @@ export function BarberForm({ onSubmit, onCancel, initialData, isLoading = false 
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <Input
               label="First Name"
@@ -113,29 +117,42 @@ export function BarberForm({ onSubmit, onCancel, initialData, isLoading = false 
             rows={3}
           />
 
-          {/* Cloudinary Upload Widget */}
-          <CloudinaryUpload
-            onUploadSuccess={handleImageUpload}
-            currentImageUrl={profileImageUrl}
-            onRemove={handleImageRemove}
-          />
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-300">
+              Profile Image
+            </label>
 
-          {/* Manual URL Input (Alternative/Fallback) */}
-          <details className="text-sm">
-            <summary className="cursor-pointer text-gray-400 hover:text-gray-300 mb-2">
-              Or enter image URL manually
-            </summary>
-            <div className="mt-2">
-              <Input
-                label="Profile Image URL"
-                type="url"
-                {...register('profileImageUrl')}
-                error={errors.profileImageUrl?.message}
-                placeholder="https://example.com/image.jpg"
-                helperText="Paste an image URL from any source"
-              />
+            {previewUrl && (
+              <div className="relative w-24 h-24 mb-2">
+                <img
+                  src={previewUrl}
+                  alt="Preview"
+                  className="w-full h-full rounded-full object-cover border-2 border-yellow-400/30"
+                />
+              </div>
+            )}
+
+            <div className="flex items-center gap-2">
+              <label className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 cursor-pointer transition-all">
+                <Upload className="w-4 h-4" />
+                {selectedFile ? 'Change Image' : 'Upload Image'}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+              </label>
+              {selectedFile && (
+                <span className="text-sm text-gray-400 truncate max-w-[150px]">
+                  {selectedFile.name}
+                </span>
+              )}
             </div>
-          </details>
+            <p className="text-xs text-gray-500">
+              Max 5MB • JPG, PNG, WebP
+            </p>
+          </div>
 
           <div className="flex gap-3 pt-4">
             <Button type="submit" disabled={isLoading} className="flex-1">

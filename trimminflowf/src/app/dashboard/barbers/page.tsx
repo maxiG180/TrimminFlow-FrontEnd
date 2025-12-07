@@ -74,7 +74,7 @@ export default function BarbersPage() {
     }
   };
 
-  const handleSubmit = async (data: CreateBarberFormData | UpdateBarberFormData) => {
+  const handleSubmit = async (data: (CreateBarberFormData | UpdateBarberFormData) & { image?: File }) => {
     if (!user?.barbershopId) return;
 
     setError('');
