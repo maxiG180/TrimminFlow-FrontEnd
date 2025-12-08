@@ -1,58 +1,36 @@
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { businessHoursSchema, BusinessHoursFormData } from '@/lib/validations';
-import { BusinessHoursResponse, DayOfWeek, DAY_LABELS } from '@/types/businessHours';
-import { Button } from '@/components/ui/Button';
+import React from 'react';
+import { BusinessHoursFormData } from '@/lib/validations';
+import { DayOfWeek, DAY_LABELS } from '@/types/businessHours';
 import { Clock } from 'lucide-react';
 
 interface BusinessHoursEditorProps {
   day: DayOfWeek;
-  hours?: BusinessHoursResponse;
-  onSave: (data: BusinessHoursFormData) => Promise<void>;
-  isLoading?: boolean;
+  value: BusinessHoursFormData;
+  onChange: (data: BusinessHoursFormData) => void;
 }
 
-export function BusinessHoursEditor({ day, hours, onSave, isLoading = false }: BusinessHoursEditorProps) {
-  const [isOpen, setIsOpen] = useState(hours?.isOpen ?? false);
-  const [hasChanges, setHasChanges] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-    watch,
-  } = useForm<BusinessHoursFormData>({
-    resolver: zodResolver(businessHoursSchema),
-    defaultValues: {
-      dayOfWeek: day,
-      isOpen: hours?.isOpen ?? false,
-      openTime: hours?.openTime || '09:00',
-      closeTime: hours?.closeTime || '18:00',
-    },
-  });
-
-  const watchedIsOpen = watch('isOpen');
+export function BusinessHoursEditor({ day, value, onChange }: BusinessHoursEditorProps) {
 
   const handleIsOpenChange = (checked: boolean) => {
-    setIsOpen(checked);
-    setValue('isOpen', checked);
-    setHasChanges(true);
+    onChange({
+      ...value,
+      isOpen: checked,
+      // If opening, ensure defaults if missing
+      openTime: checked ? (value.openTime || '09:00') : value.openTime,
+      closeTime: checked ? (value.closeTime || '18:00') : value.closeTime,
+    });
   };
 
-  const handleFormChange = () => {
-    setHasChanges(true);
-  };
-
-  const onSubmit = async (data: BusinessHoursFormData) => {
-    await onSave(data);
-    setHasChanges(false);
+  const handleChange = (field: keyof BusinessHoursFormData, val: string) => {
+    onChange({
+      ...value,
+      [field]: val,
+    });
   };
 
   return (
     <div className="bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-sm border border-white/10 rounded-xl p-5 hover:border-yellow-400/20 transition-all">
-      <form onSubmit={handleSubmit(onSubmit)} onChange={handleFormChange}>
+      <div>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-lg flex items-center justify-center">
@@ -65,55 +43,44 @@ export function BusinessHoursEditor({ day, hours, onSave, isLoading = false }: B
           <label className="relative inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
-              checked={watchedIsOpen}
+              checked={value.isOpen}
               onChange={(e) => handleIsOpenChange(e.target.checked)}
               className="sr-only peer"
             />
             <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-yellow-400 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-yellow-400 peer-checked:to-amber-500"></div>
             <span className="ms-3 text-sm font-medium text-gray-300">
-              {watchedIsOpen ? 'Open' : 'Closed'}
+              {value.isOpen ? 'Open' : 'Closed'}
             </span>
           </label>
         </div>
 
         {/* Time Inputs */}
-        {watchedIsOpen && (
+        {value.isOpen && (
           <div className="space-y-3 mb-4">
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1.5">Open Time</label>
                 <input
                   type="time"
-                  {...register('openTime')}
+                  value={value.openTime || ''}
+                  onChange={(e) => handleChange('openTime', e.target.value)}
                   className="w-full px-3 py-2 bg-black/30 backdrop-blur-sm border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all"
                 />
-                {errors.openTime && (
-                  <p className="mt-1 text-xs text-red-400">{errors.openTime.message}</p>
-                )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1.5">Close Time</label>
                 <input
                   type="time"
-                  {...register('closeTime')}
+                  value={value.closeTime || ''}
+                  onChange={(e) => handleChange('closeTime', e.target.value)}
                   className="w-full px-3 py-2 bg-black/30 backdrop-blur-sm border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all"
                 />
-                {errors.closeTime && (
-                  <p className="mt-1 text-xs text-red-400">{errors.closeTime.message}</p>
-                )}
               </div>
             </div>
           </div>
         )}
-
-        {/* Save Button */}
-        {hasChanges && (
-          <Button type="submit" disabled={isLoading} className="w-full" size="sm">
-            {isLoading ? 'Saving...' : 'Save Changes'}
-          </Button>
-        )}
-      </form>
+      </div>
     </div>
   );
 }

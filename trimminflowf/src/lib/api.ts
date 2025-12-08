@@ -420,7 +420,7 @@ export const barberApi = {
   async update(
     barbershopId: string,
     barberId: string,
-    data: UpdateBarberRequest & { image?: File }
+    data: UpdateBarberRequest & { image?: File; removeProfileImage?: boolean }
   ): Promise<BarberResponse> {
     const formData = new FormData();
     if (data.firstName) formData.append('firstName', data.firstName);
@@ -431,6 +431,7 @@ export const barberApi = {
     if (data.profileImageUrl !== undefined) formData.append('profileImageUrl', data.profileImageUrl || '');
     if (data.isActive !== undefined) formData.append('isActive', String(data.isActive));
     if (data.image) formData.append('image', data.image);
+    if (data.removeProfileImage) formData.append('removeProfileImage', String(data.removeProfileImage));
 
     const response = await apiClient.put<BarberResponse>(`/barbers/${barberId}`, formData, {
       headers: {

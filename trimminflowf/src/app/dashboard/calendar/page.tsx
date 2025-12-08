@@ -32,6 +32,24 @@ export default function CalendarPage() {
     customerPhone: '',
     notes: '',
   });
+  const [formError, setFormError] = useState<string>('');
+
+  // Save form data to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('appointmentFormData', JSON.stringify(formData));
+  }, [formData]);
+
+  // Load form data from localStorage on mount
+  useEffect(() => {
+    const savedData = localStorage.getItem('appointmentFormData');
+    if (savedData) {
+      try {
+        setFormData(JSON.parse(savedData));
+      } catch (e) {
+        console.error('Failed to parse saved form data');
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (user?.barbershopId) {
@@ -115,12 +133,13 @@ export default function CalendarPage() {
     if (!user?.barbershopId) return;
 
     try {
+      setFormError('');
       await appointmentApi.create(user.barbershopId, formData);
       setShowCreateModal(false);
       resetForm();
       loadData();
     } catch (error: any) {
-      alert(error.message || 'Failed to create appointment');
+      setFormError(error.response?.data?.message || error.message || 'Failed to create appointment');
     }
   };
 
@@ -147,6 +166,8 @@ export default function CalendarPage() {
       customerPhone: '',
       notes: '',
     });
+    localStorage.removeItem('appointmentFormData');
+    setFormError('');
   };
 
   const getStatusColor = (status: AppointmentStatus) => {
@@ -304,15 +325,39 @@ export default function CalendarPage() {
                             ? `bg-gradient-to-r ${getStatusColor(slotAppointments[0].status)} border`
                             : 'bg-white/5 border border-white/10'
                             } hover:border-yellow-400/50 transition-all cursor-pointer`}
-                          onClick={() => slotAppointments[0] && setSelectedAppointment(slotAppointments[0])}
+                          onClick={() => {
+                            if (slotAppointments.length > 0) {
+                              setSelectedAppointment(slotAppointments[0]);
+                            } else {
+                              // Create new date object combining date and time
+                              const [hours, minutes] = time.split(':');
+                              const newDate = new Date(date);
+                              newDate.setHours(parseInt(hours), parseInt(minutes));
+
+                              setFormData(prev => ({
+                                ...prev,
+                                appointmentDateTime: format(newDate, "yyyy-MM-dd'T'HH:mm")
+                              }));
+                              setShowCreateModal(true);
+                            }
+                          }}
                         >
                           {slotAppointments.map((apt, idx) => (
-                            <div key={idx} className="mb-2">
-                              <p className="font-bold text-white text-sm truncate">{apt.customerName}</p>
-                              <p className="text-xs text-gray-400 mt-1 truncate">{apt.service.name}</p>
-                              <p className="text-xs text-yellow-400 mt-1 truncate">
-                                {apt.barber.firstName} {apt.barber.lastName}
-                              </p>
+                            <div key={idx} className="mb-2 flex items-start gap-2">
+                              {apt.barber.profileImageUrl && (
+                                <img
+                                  src={apt.barber.profileImageUrl}
+                                  alt="Barber"
+                                  className="w-8 h-8 rounded-full object-cover border border-yellow-400/50"
+                                />
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <p className="font-bold text-white text-sm truncate">{apt.customerName}</p>
+                                <p className="text-xs text-gray-400 mt-0.5 truncate">{apt.service.name}</p>
+                                <p className="text-xs text-yellow-400 mt-0.5 truncate">
+                                  {apt.barber.firstName} {apt.barber.lastName}
+                                </p>
+                              </div>
                             </div>
                           ))}
                         </div>
@@ -343,6 +388,12 @@ export default function CalendarPage() {
                 <X className="w-5 h-5 text-gray-400" />
               </button>
             </div>
+
+            {formError && (
+              <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 text-red-300 rounded-lg text-sm">
+                {formError}
+              </div>
+            )}
 
             <form onSubmit={handleCreateAppointment} className="space-y-4">
               <div>
@@ -448,90 +499,93 @@ export default function CalendarPage() {
                 </button>
               </div>
             </form>
-          </motion.div>
-        </div>
-      )}
+          </motion.div >
+        </div >
+      )
+      }
 
       {/* View/Edit Modal */}
-      {selectedAppointment && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 w-full max-w-md border border-white/10"
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-white">Appointment Details</h2>
-              <button
-                onClick={() => setSelectedAppointment(null)}
-                className="p-2 hover:bg-white/10 rounded-lg transition"
-              >
-                <X className="w-5 h-5 text-gray-400" />
-              </button>
-            </div>
-
-            <div className="space-y-3 text-gray-300">
-              <div>
-                <span className="font-semibold text-white">Customer:</span> {selectedAppointment.customerName}
-              </div>
-              <div>
-                <span className="font-semibold text-white">Email:</span> {selectedAppointment.customerEmail}
-              </div>
-              {selectedAppointment.customerPhone && (
-                <div>
-                  <span className="font-semibold text-white">Phone:</span> {selectedAppointment.customerPhone}
-                </div>
-              )}
-              <div>
-                <span className="font-semibold text-white">Barber:</span> {selectedAppointment.barber.firstName} {selectedAppointment.barber.lastName}
-              </div>
-              <div>
-                <span className="font-semibold text-white">Service:</span> {selectedAppointment.service.name}
-              </div>
-              <div>
-                <span className="font-semibold text-white">Duration:</span> {selectedAppointment.service.durationMinutes} minutes
-              </div>
-              <div>
-                <span className="font-semibold text-white">Price:</span> ${selectedAppointment.service.price}
-              </div>
-              <div>
-                <span className="font-semibold text-white">Date:</span> {format(parseISO(selectedAppointment.appointmentDateTime), 'PPP')}
-              </div>
-              <div>
-                <span className="font-semibold text-white">Time:</span> {format(parseISO(selectedAppointment.appointmentDateTime), 'p')}
-              </div>
-              <div>
-                <span className="font-semibold text-white">Status:</span>{' '}
-                <span className={`px-2 py-1 rounded text-sm bg-gradient-to-r ${getStatusColor(selectedAppointment.status)} border`}>
-                  {selectedAppointment.status}
-                </span>
-              </div>
-              {selectedAppointment.notes && (
-                <div>
-                  <span className="font-semibold text-white">Notes:</span> {selectedAppointment.notes}
-                </div>
-              )}
-            </div>
-
-            <div className="flex gap-2 mt-6">
-              {selectedAppointment.status !== 'CANCELLED' && (
+      {
+        selectedAppointment && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 w-full max-w-md border border-white/10"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold text-white">Appointment Details</h2>
                 <button
-                  onClick={() => handleCancelAppointment(selectedAppointment.id)}
-                  className="flex-1 bg-gradient-to-r from-red-500 to-rose-600 text-white py-2 rounded-lg hover:from-red-600 hover:to-rose-700 font-medium"
+                  onClick={() => setSelectedAppointment(null)}
+                  className="p-2 hover:bg-white/10 rounded-lg transition"
                 >
-                  Cancel Appointment
+                  <X className="w-5 h-5 text-gray-400" />
                 </button>
-              )}
-              <button
-                onClick={() => setSelectedAppointment(null)}
-                className="flex-1 border border-white/10 py-2 rounded-lg hover:bg-white/5 text-white"
-              >
-                Close
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      )}
-    </div>
+              </div>
+
+              <div className="space-y-3 text-gray-300">
+                <div>
+                  <span className="font-semibold text-white">Customer:</span> {selectedAppointment.customerName}
+                </div>
+                <div>
+                  <span className="font-semibold text-white">Email:</span> {selectedAppointment.customerEmail}
+                </div>
+                {selectedAppointment.customerPhone && (
+                  <div>
+                    <span className="font-semibold text-white">Phone:</span> {selectedAppointment.customerPhone}
+                  </div>
+                )}
+                <div>
+                  <span className="font-semibold text-white">Barber:</span> {selectedAppointment.barber.firstName} {selectedAppointment.barber.lastName}
+                </div>
+                <div>
+                  <span className="font-semibold text-white">Service:</span> {selectedAppointment.service.name}
+                </div>
+                <div>
+                  <span className="font-semibold text-white">Duration:</span> {selectedAppointment.service.durationMinutes} minutes
+                </div>
+                <div>
+                  <span className="font-semibold text-white">Price:</span> ${selectedAppointment.service.price}
+                </div>
+                <div>
+                  <span className="font-semibold text-white">Date:</span> {format(parseISO(selectedAppointment.appointmentDateTime), 'PPP')}
+                </div>
+                <div>
+                  <span className="font-semibold text-white">Time:</span> {format(parseISO(selectedAppointment.appointmentDateTime), 'p')}
+                </div>
+                <div>
+                  <span className="font-semibold text-white">Status:</span>{' '}
+                  <span className={`px-2 py-1 rounded text-sm bg-gradient-to-r ${getStatusColor(selectedAppointment.status)} border`}>
+                    {selectedAppointment.status}
+                  </span>
+                </div>
+                {selectedAppointment.notes && (
+                  <div>
+                    <span className="font-semibold text-white">Notes:</span> {selectedAppointment.notes}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-2 mt-6">
+                {selectedAppointment.status !== 'CANCELLED' && (
+                  <button
+                    onClick={() => handleCancelAppointment(selectedAppointment.id)}
+                    className="flex-1 bg-gradient-to-r from-red-500 to-rose-600 text-white py-2 rounded-lg hover:from-red-600 hover:to-rose-700 font-medium"
+                  >
+                    Cancel Appointment
+                  </button>
+                )}
+                <button
+                  onClick={() => setSelectedAppointment(null)}
+                  className="flex-1 border border-white/10 py-2 rounded-lg hover:bg-white/5 text-white"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )
+      }
+    </div >
   );
 }

@@ -8,16 +8,20 @@ import { BusinessHoursResponse, DAYS_OF_WEEK, DayOfWeek } from '@/types/business
 import { BusinessHoursFormData } from '@/lib/validations';
 import DashboardSidebar from '@/components/layout/DashboardSidebar';
 import { BusinessHoursEditor } from '@/components/businessHours/BusinessHoursEditor';
-import { Loader, Clock } from 'lucide-react';
+import { Loader, Clock, Save } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 
 export default function SettingsPage() {
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
 
   // State
-  const [businessHours, setBusinessHours] = useState<Record<string, BusinessHoursResponse>>({});
+  // We keep track of the form data for each day
+  const [hoursState, setHoursState] = useState<Record<string, BusinessHoursFormData>>({});
+  const [initialState, setInitialState] = useState<Record<string, BusinessHoursFormData>>({});
+
   const [isLoading, setIsLoading] = useState(true);
-  const [savingDay, setSavingDay] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string>('');
   const [successMessage, setSuccessMessage] = useState<string>('');
 
@@ -44,13 +48,22 @@ export default function SettingsPage() {
 
       const hours = await businessHoursApi.getAll(user.barbershopId);
 
-      // Convert array to map for easy lookup
-      const hoursMap: Record<string, BusinessHoursResponse> = {};
-      hours.forEach((h) => {
-        hoursMap[h.dayOfWeek] = h;
+      // Convert to map for state
+      const hoursMap: Record<string, BusinessHoursFormData> = {};
+
+      // Initialize all days with defaults or fetched values
+      DAYS_OF_WEEK.forEach(day => {
+        const found = hours.find(h => h.dayOfWeek === day);
+        hoursMap[day] = {
+          dayOfWeek: day,
+          isOpen: found?.isOpen ?? (day !== 'SUNDAY' && day !== 'SATURDAY'), // Default week days open
+          openTime: found?.openTime || '09:00',
+          closeTime: found?.closeTime || '18:00',
+        };
       });
 
-      setBusinessHours(hoursMap);
+      setHoursState(hoursMap);
+      setInitialState(JSON.parse(JSON.stringify(hoursMap))); // Deep copy for comparison across re-renders
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to load business hours');
       console.error(err);
@@ -59,35 +72,47 @@ export default function SettingsPage() {
     }
   };
 
-  const handleSave = async (data: BusinessHoursFormData) => {
+  const handleDayChange = (day: string, data: BusinessHoursFormData) => {
+    setHoursState(prev => ({
+      ...prev,
+      [day]: data
+    }));
+  };
+
+  const handleSaveAll = async () => {
     if (!user?.barbershopId) return;
 
-    setSavingDay(data.dayOfWeek);
+    setIsSaving(true);
     setError('');
     setSuccessMessage('');
 
     try {
-      const response = await businessHoursApi.setHours(user.barbershopId, {
-        dayOfWeek: data.dayOfWeek,
-        isOpen: data.isOpen,
-        openTime: data.isOpen ? data.openTime : undefined,
-        closeTime: data.isOpen ? data.closeTime : undefined,
+      // Create an array of promises for all days
+      // We send all of them to ensure consistency, or we could optimize to send only changed ones.
+      // For simplicity and robustness, let's send all.
+      const promises = DAYS_OF_WEEK.map(day => {
+        const data = hoursState[day];
+        return businessHoursApi.setHours(user.barbershopId, {
+          dayOfWeek: data.dayOfWeek,
+          isOpen: data.isOpen,
+          openTime: data.isOpen ? data.openTime : undefined,
+          closeTime: data.isOpen ? data.closeTime : undefined,
+        });
       });
 
-      // Update local state
-      setBusinessHours((prev) => ({
-        ...prev,
-        [data.dayOfWeek]: response,
-      }));
+      await Promise.all(promises);
 
-      setSuccessMessage(`${data.dayOfWeek} hours updated successfully!`);
+      setSuccessMessage('Business hours updated successfully!');
+      setInitialState(JSON.parse(JSON.stringify(hoursState))); // Update baseline
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to save business hours');
+      setError(err.response?.data?.message || 'Failed to save settings');
     } finally {
-      setSavingDay(null);
+      setIsSaving(false);
     }
   };
+
+  const hasChanges = JSON.stringify(hoursState) !== JSON.stringify(initialState); // Simple comparison
 
   if (!isAuthenticated || !user) {
     return (
@@ -103,9 +128,29 @@ export default function SettingsPage() {
 
       <div className="flex-1 p-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Settings</h1>
-          <p className="text-gray-400">Manage your barbershop settings and business hours</p>
+        <div className="mb-8 flex justify-between items-start">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">Settings</h1>
+            <p className="text-gray-400">Manage your barbershop settings and business hours</p>
+          </div>
+
+          <Button
+            onClick={handleSaveAll}
+            disabled={isSaving || !hasChanges}
+            className={`flex items-center gap-2 ${hasChanges ? 'animate-pulse' : ''}`}
+          >
+            {isSaving ? (
+              <>
+                <Loader className="w-4 h-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4" />
+                Save Changes
+              </>
+            )}
+          </Button>
         </div>
 
         {/* Error/Success Messages */}
@@ -142,9 +187,13 @@ export default function SettingsPage() {
                 <BusinessHoursEditor
                   key={day}
                   day={day}
-                  hours={businessHours[day]}
-                  onSave={handleSave}
-                  isLoading={savingDay === day}
+                  value={hoursState[day] || {
+                    dayOfWeek: day,
+                    isOpen: false,
+                    openTime: '09:00',
+                    closeTime: '18:00'
+                  }}
+                  onChange={(data) => handleDayChange(day, data)}
                 />
               ))}
             </div>

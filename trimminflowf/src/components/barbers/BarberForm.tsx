@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/Button';
 import { X, Upload } from 'lucide-react';
 
 interface BarberFormProps {
-  onSubmit: (data: (CreateBarberFormData | UpdateBarberFormData) & { image?: File }) => Promise<void>;
+  onSubmit: (data: (CreateBarberFormData | UpdateBarberFormData) & { image?: File; removeProfileImage?: boolean }) => Promise<void>;
   onCancel: () => void;
   initialData?: BarberResponse;
   isLoading?: boolean;
@@ -18,6 +18,7 @@ interface BarberFormProps {
 export function BarberForm({ onSubmit, onCancel, initialData, isLoading = false }: BarberFormProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.profileImageUrl || null);
+  const [removeImage, setRemoveImage] = useState(false);
 
   const {
     register,
@@ -51,11 +52,16 @@ export function BarberForm({ onSubmit, onCancel, initialData, isLoading = false 
       const file = e.target.files[0];
       setSelectedFile(file);
       setPreviewUrl(URL.createObjectURL(file));
+      setRemoveImage(false);
     }
   };
 
   const onFormSubmit = (data: CreateBarberFormData | UpdateBarberFormData) => {
-    onSubmit({ ...data, image: selectedFile || undefined });
+    onSubmit({
+      ...data,
+      image: selectedFile || undefined,
+      removeProfileImage: removeImage
+    });
   };
 
   return (
@@ -123,19 +129,31 @@ export function BarberForm({ onSubmit, onCancel, initialData, isLoading = false 
             </label>
 
             {previewUrl && (
-              <div className="relative w-24 h-24 mb-2">
+              <div className="relative w-24 h-24 mb-2 group">
                 <img
                   src={previewUrl}
                   alt="Preview"
                   className="w-full h-full rounded-full object-cover border-2 border-yellow-400/30"
                 />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedFile(null);
+                    setPreviewUrl(null);
+                    setRemoveImage(true);
+                    setValue('profileImageUrl', '');
+                  }}
+                  className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <X className="w-6 h-6 text-red-400" />
+                </button>
               </div>
             )}
 
             <div className="flex items-center gap-2">
               <label className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 cursor-pointer transition-all">
                 <Upload className="w-4 h-4" />
-                {selectedFile ? 'Change Image' : 'Upload Image'}
+                {selectedFile || previewUrl ? 'Change Image' : 'Upload Image'}
                 <input
                   type="file"
                   accept="image/*"
