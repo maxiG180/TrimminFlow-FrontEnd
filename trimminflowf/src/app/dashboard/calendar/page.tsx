@@ -62,7 +62,7 @@ export default function CalendarPage() {
     // import sockjs dynamically so it works with nextjs
     import('sockjs-client').then((SockJS) => {
       import('@stomp/stompjs').then(({ Client }) => {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://trimminflow-backend-production.up.railway.app/api/v1';
         const wsUrl = apiUrl.replace(/\/api\/v1\/?$/, '') + '/ws';
         const socket = new SockJS.default(wsUrl);
         const stompClient = new Client({

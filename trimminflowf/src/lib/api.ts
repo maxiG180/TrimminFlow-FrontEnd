@@ -6,7 +6,7 @@ import { PageResponse, PaginationParams } from '@/types/pagination';
 import apiClient from './axios';
 import { Appointment, CreateAppointmentRequest, UpdateAppointmentRequest, AppointmentFilters } from '@/types/appointment';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://trimminflow-backend-production.up.railway.app/api/v1';
 
 export interface CreateBarbershopRequest {
   name: string;
