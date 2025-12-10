@@ -62,12 +62,14 @@ export default function CalendarPage() {
     // import sockjs dynamically so it works with nextjs
     import('sockjs-client').then((SockJS) => {
       import('@stomp/stompjs').then(({ Client }) => {
-        const socket = new SockJS.default('http://localhost:8080/ws');
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
+        const wsUrl = apiUrl.replace(/\/api\/v1\/?$/, '') + '/ws';
+        const socket = new SockJS.default(wsUrl);
         const stompClient = new Client({
           webSocketFactory: () => socket,
           onConnect: () => {
             console.log('Connected to WebSocket');
-            stompClient.subscribe('/topic/appointments', (message) => {
+            stompClient.subscribe('/topic/appointments', (message: any) => {
               const updatedAppointment: Appointment = JSON.parse(message.body);
 
               // update the list immediately when we get a message
@@ -85,7 +87,7 @@ export default function CalendarPage() {
               });
             });
           },
-          onStompError: (frame) => {
+          onStompError: (frame: any) => {
             console.error('Broker reported error: ' + frame.headers['message']);
             console.error('Additional details: ' + frame.body);
           },

@@ -1,55 +1,5 @@
 // Mock data for development - will be replaced with real API calls
 
-export interface Service {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  durationMinutes: number;
-}
-
-export interface Barbershop {
-  id: string;
-  name: string;
-  address: string;
-  phone: string;
-  email: string;
-}
-
-// Mock Services
-export const mockServices: Service[] = [
-  {
-    id: '1',
-    name: 'Classic Haircut',
-    description: 'Traditional scissor cut tailored to your style',
-    price: 25.0,
-    durationMinutes: 30,
-  },
-  {
-    id: '2',
-    name: 'Haircut + Beard Trim',
-    description: 'Complete grooming service with hot towel',
-    price: 35.0,
-    durationMinutes: 45,
-  },
-  {
-    id: '3',
-    name: 'Premium Shave',
-    description: 'Old school straight razor shave with facial massage',
-    price: 20.0,
-    durationMinutes: 30,
-  },
-];
-
-// Mock Barbershop
-export const mockBarbershop: Barbershop = {
-  id: '485b6e1d-d043-4fac-94dd-aa59d08e9d1c',
-  name: 'Elite Cuts Barber Shop',
-  address: '123 Main Street, City Center',
-  phone: '+1 234 567 890',
-  email: 'contact@elitecuts.com',
-};
-
 export interface Appointment {
   id: string;
   barbershopId: string;

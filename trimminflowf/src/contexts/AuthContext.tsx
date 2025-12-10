@@ -26,6 +26,8 @@ interface AuthContextType {
   getAccessToken: () => string | null;
 }
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 /**
@@ -70,7 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           // We have user data, but need to verify the token is still valid
           try {
             // Make a test request to validate the token
-            const response = await fetch('http://localhost:8080/api/v1/auth/validate', {
+            const response = await fetch(`${API_BASE_URL}/auth/validate`, {
               method: 'GET',
               credentials: 'include', // Send the httpOnly cookie
             });
@@ -140,9 +142,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = useCallback(async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      console.log('🔐 Attempting login with:', { email, apiUrl: 'http://localhost:8080/api/v1/auth/login' });
+      console.log('🔐 Attempting login with:', { email, apiUrl: `${API_BASE_URL}/auth/login` });
 
-      const response = await fetch('http://localhost:8080/api/v1/auth/login', {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -195,7 +197,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Provide more helpful error message
       if (error instanceof TypeError && error.message === 'Failed to fetch') {
-        throw new Error('Cannot connect to server. Please ensure the backend is running on http://localhost:8080');
+        throw new Error('Cannot connect to server. Please ensure the backend is running.');
       }
 
       throw error;
@@ -213,7 +215,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = useCallback(async () => {
     try {
       // Call backend logout endpoint to clear httpOnly cookie
-      await fetch('http://localhost:8080/api/v1/auth/logout', {
+      await fetch(`${API_BASE_URL}/auth/logout`, {
         method: 'POST',
         credentials: 'include', // ✅ Send cookie to be cleared
       });
