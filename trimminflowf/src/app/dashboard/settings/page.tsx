@@ -200,10 +200,86 @@ export default function SettingsPage() {
           )}
         </div>
 
-        {/* Additional Settings Sections can be added here */}
+        {/* Logo Upload Section */}
         <div className="mt-6 bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
-          <h3 className="text-xl font-bold text-white mb-2">Additional Settings</h3>
-          <p className="text-gray-400">More settings will be available soon...</p>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-xl flex items-center justify-center">
+              <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-white">Barbershop Logo</h2>
+              <p className="text-gray-400 text-sm">Upload your logo to appear on the booking page</p>
+            </div>
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-6 items-center">
+            {/* Current Logo Preview */}
+            <div className="flex-shrink-0">
+              {user.barbershop?.logoUrl ? (
+                <div className="relative group">
+                  <img
+                    src={user.barbershop.logoUrl}
+                    alt="Barbershop Logo"
+                    className="w-32 h-32 rounded-xl object-cover border-2 border-yellow-400/20"
+                  />
+                  <div className="absolute inset-0 bg-black/50 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="text-white text-sm">Current Logo</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="w-32 h-32 rounded-xl bg-gradient-to-br from-yellow-400 to-amber-600 flex items-center justify-center text-4xl font-bold text-black">
+                  {user.barbershop?.name?.charAt(0) || '?'}
+                </div>
+              )}
+            </div>
+
+            {/* Upload Button */}
+            <div className="flex-1">
+              <label className="block">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file || !user?.barbershopId) return;
+
+                    try {
+                      const formData = new FormData();
+                      formData.append('file', file);
+
+                      const response = await fetch(
+                        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1'}/barbershops/${user.barbershopId}/upload-logo`,
+                        {
+                          method: 'POST',
+                          credentials: 'include',
+                          body: formData,
+                        }
+                      );
+
+                      if (response.ok) {
+                        setSuccessMessage('Logo uploaded successfully! Refresh to see changes.');
+                        setTimeout(() => window.location.reload(), 1500);
+                      } else {
+                        setError('Failed to upload logo. Please try again.');
+                      }
+                    } catch (err) {
+                      setError('Failed to upload logo. Please try again.');
+                    }
+                  }}
+                />
+                <div className="cursor-pointer px-6 py-4 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-yellow-400/20">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  </svg>
+                  Upload New Logo
+                </div>
+              </label>
+              <p className="text-gray-500 text-xs mt-2">Recommended: Square image, at least 400x400px (JPG, PNG)</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

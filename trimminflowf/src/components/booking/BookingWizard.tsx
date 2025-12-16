@@ -162,22 +162,45 @@ export default function BookingWizard({ barbershopId, preSelectedBarberId }: Boo
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
             {/* Header */}
             <header className="bg-black/50 backdrop-blur-md border-b border-white/10 sticky top-0 z-10">
-                <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-                    <div>
-                        <h1 className="text-xl font-bold text-white">{barbershop.name}</h1>
-                        <p className="text-sm text-gray-400">{barbershop.address}</p>
+                <div className="max-w-3xl mx-auto px-4 py-6">
+                    <div className="flex items-center gap-4 mb-4">
+                        {/* Logo */}
+                        {barbershop.logoUrl ? (
+                            <img
+                                src={barbershop.logoUrl}
+                                alt={barbershop.name}
+                                className="w-16 h-16 rounded-xl object-cover border-2 border-yellow-400/20"
+                            />
+                        ) : (
+                            <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-yellow-400 to-amber-600 flex items-center justify-center text-2xl font-bold text-black">
+                                {barbershop.name.charAt(0)}
+                            </div>
+                        )}
+
+                        <div className="flex-1">
+                            <h1 className="text-2xl font-bold text-white">{barbershop.name}</h1>
+                            {barbershop.address && (
+                                <p className="text-sm text-gray-400">{barbershop.address}</p>
+                            )}
+                        </div>
+
+                        <div className="text-right">
+                            <div className="text-xs text-gray-500 uppercase tracking-wider">Step</div>
+                            <div className="text-lg text-yellow-400 font-bold">
+                                {currentStepDisplay} / {totalSteps}
+                            </div>
+                        </div>
                     </div>
-                    <div className="text-sm text-yellow-400 font-medium">
-                        Step {currentStepDisplay} of {totalSteps}
+
+                    {/* Progress Bar */}
+                    <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                        <motion.div
+                            className="h-full bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full"
+                            initial={{ width: '0%' }}
+                            animate={{ width: `${(currentStepDisplay / totalSteps) * 100}%` }}
+                            transition={{ duration: 0.3 }}
+                        />
                     </div>
-                </div>
-                {/* Progress Bar */}
-                <div className="h-1 bg-gray-800 w-full">
-                    <motion.div
-                        className="h-full bg-gradient-to-r from-yellow-400 to-amber-500"
-                        initial={{ width: '0%' }}
-                        animate={{ width: `${(currentStepDisplay / totalSteps) * 100}%` }}
-                    />
                 </div>
             </header>
 
@@ -283,8 +306,8 @@ export default function BookingWizard({ barbershopId, preSelectedBarberId }: Boo
                                             key={i}
                                             onClick={() => setSelection({ ...selection, date, time: null })}
                                             className={`min-w-[80px] p-4 rounded-xl border transition-all ${isSelected
-                                                    ? 'bg-yellow-400 border-yellow-400 text-black'
-                                                    : 'bg-white/5 border-white/10 text-white hover:bg-white/10'
+                                                ? 'bg-yellow-400 border-yellow-400 text-black'
+                                                : 'bg-white/5 border-white/10 text-white hover:bg-white/10'
                                                 }`}
                                         >
                                             <div className="text-sm font-medium opacity-80">{format(date, 'EEE')}</div>
@@ -316,8 +339,8 @@ export default function BookingWizard({ barbershopId, preSelectedBarberId }: Boo
                                                     key={slot}
                                                     onClick={() => setSelection({ ...selection, time })}
                                                     className={`py-3 px-4 rounded-lg border text-sm font-medium transition-all ${isSelected
-                                                            ? 'bg-yellow-400 border-yellow-400 text-black'
-                                                            : 'bg-white/5 border-white/10 text-white hover:border-yellow-400/50'
+                                                        ? 'bg-yellow-400 border-yellow-400 text-black'
+                                                        : 'bg-white/5 border-white/10 text-white hover:border-yellow-400/50'
                                                         }`}
                                                 >
                                                     {time}

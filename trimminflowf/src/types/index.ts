@@ -10,6 +10,7 @@ export interface Barbershop {
   timezone: string;
   businessHours: string | null; // JSONB stored as string in backend
   qrCodeUrl?: string;
+  logoUrl?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -71,26 +72,28 @@ export interface Service {
 
 export interface Customer {
   id: string;
-  name: string;
+  firstName: string;
+  lastName?: string;
   phone: string;
   email?: string;
   notes?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Appointment {
   id: string;
   barbershopId: string;
   barberId: string;
-  customerId: string;
+  customerId?: string;
   serviceId: string;
-  appointmentDate: string;
-  startTime: string;
-  endTime: string;
-  status: 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'NO_SHOW';
+  appointmentDateTime: string; // Updated to match backend
+  status: 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'NO_SHOW';
   price: number;
   notes?: string;
+  customerName?: string; // Snapshot fields
+  customerEmail?: string;
+  customerPhone?: string;
   createdAt: Date;
   updatedAt: Date;
   // Populated fields
