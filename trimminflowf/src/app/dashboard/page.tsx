@@ -16,6 +16,14 @@ import DashboardSidebar from '@/components/layout/DashboardSidebar';
 export default function Dashboard() {
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
+  const [todayAppointments, setTodayAppointments] = useState<any[]>([]);
+  const [stats, setStats] = useState({
+    todayCount: 0,
+    todayRevenue: 0,
+    totalCustomers: 0,
+    weeklyRevenue: 0,
+  });
+  const [loading, setLoading] = useState(true);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -23,6 +31,61 @@ export default function Dashboard() {
       router.push('/login');
     }
   }, [isAuthenticated, router]);
+
+  // Fetch dashboard data
+  useEffect(() => {
+    if (user?.barbershopId) {
+      loadDashboardData();
+    }
+  }, [user]);
+
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true);
+
+      // Fetch analytics data
+      const analyticsResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1'}/analytics`,
+        { credentials: 'include' }
+      );
+
+      if (analyticsResponse.ok) {
+        const analyticsData = await analyticsResponse.json();
+
+        // Fetch today's appointments
+        const today = new Date();
+        const startOfDay = new Date(today.setHours(0, 0, 0, 0)).toISOString();
+        const endOfDay = new Date(today.setHours(23, 59, 59, 999)).toISOString();
+
+        const appointmentsResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1'}/appointments?startDate=${startOfDay}&endDate=${endOfDay}`,
+          { credentials: 'include' }
+        );
+
+        let todayRevenue = 0;
+        if (appointmentsResponse.ok) {
+          const appointmentsData = await appointmentsResponse.json();
+          setTodayAppointments(appointmentsData.content || []);
+
+          // Calculate today's revenue
+          todayRevenue = (appointmentsData.content || [])
+            .filter((a: any) => a.status === 'COMPLETED')
+            .reduce((sum: number, a: any) => sum + (a.service?.price || 0), 0);
+        }
+
+        setStats({
+          todayCount: analyticsData.todayAppointments || 0,
+          todayRevenue: todayRevenue,
+          totalCustomers: analyticsData.totalAppointments || 0,
+          weeklyRevenue: analyticsData.totalRevenue || 0,
+        });
+      }
+    } catch (error) {
+      console.error('Failed to load dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Show loading state while checking auth
   if (!isAuthenticated || !user) {
@@ -36,31 +99,27 @@ export default function Dashboard() {
     );
   }
 
-  // TODO: Fetch real data from API
-  const todayAppointments: any[] = [];
-  const activeBarbers: any[] = [];
-
   const statsData = [
     {
       title: "Today's Appointments",
-      value: '0',
-      change: '€0.00',
+      value: stats.todayCount.toString(),
+      change: `€${stats.todayRevenue.toFixed(2)}`,
       iconSvg: '/svg_custom/schedule-svgrepo-com.svg',
       gradient: 'from-yellow-500 to-amber-600',
       bgGradient: 'from-yellow-500/10 to-amber-600/10',
     },
     {
-      title: 'Total Customers',
-      value: '0',
-      change: '+0 new',
+      title: 'Total Appointments',
+      value: stats.totalCustomers.toString(),
+      change: `${stats.todayCount} today`,
       iconSvg: '/svg_custom/people-who-support-svgrepo-com.svg',
       gradient: 'from-amber-500 to-yellow-600',
       bgGradient: 'from-amber-500/10 to-yellow-600/10',
     },
     {
-      title: 'Weekly Revenue',
-      value: '€0.00',
-      change: '+0%',
+      title: 'Total Revenue',
+      value: `€${stats.weeklyRevenue.toFixed(2)}`,
+      change: 'All time',
       iconSvg: '/svg_custom/euro-banknote-svgrepo-com.svg',
       gradient: 'from-yellow-600 to-amber-700',
       bgGradient: 'from-yellow-600/10 to-amber-700/10',
@@ -134,11 +193,10 @@ export default function Dashboard() {
                       alt={stat.title}
                       width={48}
                       height={48}
-                      className={`object-contain group-hover:scale-110 transition-transform ${
-                        stat.iconSvg.includes('people-who-support')
-                          ? 'w-12 h-12 sm:w-16 sm:h-16'
-                          : 'w-10 h-10 sm:w-12 sm:h-12'
-                      }`}
+                      className={`object-contain group-hover:scale-110 transition-transform ${stat.iconSvg.includes('people-who-support')
+                        ? 'w-12 h-12 sm:w-16 sm:h-16'
+                        : 'w-10 h-10 sm:w-12 sm:h-12'
+                        }`}
                     />
                   </div>
                   <p className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-2 sm:mb-3 tracking-tight">{stat.value}</p>
