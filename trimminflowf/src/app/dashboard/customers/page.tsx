@@ -93,70 +93,74 @@ export default function CustomersPage() {
                         {searchTerm ? 'No customers found matching your search.' : 'No customers found.'}
                     </div>
                 ) : (
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-b border-white/10 bg-white/5">
-                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Name</th>
-                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Phone</th>
-                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Email</th>
-                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Joined</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-white/5">
-                                {customers.map((customer) => (
-                                    <tr
-                                        key={customer.id}
-                                        onClick={() => handleCustomerClick(customer)}
-                                        className="group hover:bg-white/5 transition-colors cursor-pointer"
-                                    >
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-gray-600 flex items-center justify-center text-white font-medium text-xs">
-                                                    {customer.firstName[0]}
-                                                </div>
-                                                <span className="text-white font-medium group-hover:text-yellow-400 transition-colors">
-                                                    {customer.firstName} {customer.lastName}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 text-gray-300">{customer.phone}</td>
-                                        <td className="px-6 py-4 text-gray-300">{customer.email || '-'}</td>
-                                        <td className="px-6 py-4 text-gray-400 text-sm">
-                                            {customer.createdAt ? format(new Date(customer.createdAt), 'MMM d, yyyy') : '-'}
-                                        </td>
+                    <div className="overflow-x-auto -mx-4 sm:mx-0">
+                        <div className="inline-block min-w-full align-middle">
+                            <table className="min-w-full">
+                                <thead>
+                                    <tr className="border-b border-white/10 bg-white/5">
+                                        <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-300 whitespace-nowrap">Name</th>
+                                        <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-300 whitespace-nowrap">Phone</th>
+                                        <th className="hidden md:table-cell px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-300 whitespace-nowrap">Email</th>
+                                        <th className="hidden lg:table-cell px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-300 whitespace-nowrap">Joined</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody className="divide-y divide-white/5">
+                                    {customers.map((customer) => (
+                                        <tr
+                                            key={customer.id}
+                                            onClick={() => handleCustomerClick(customer)}
+                                            className="group hover:bg-white/5 transition-colors cursor-pointer active:bg-white/10"
+                                        >
+                                            <td className="px-3 sm:px-6 py-3 sm:py-4">
+                                                <div className="flex items-center gap-2 sm:gap-3">
+                                                    <div className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0 rounded-full bg-gradient-to-br from-gray-700 to-gray-600 flex items-center justify-center text-white font-medium text-xs sm:text-sm">
+                                                        {customer.firstName[0]}
+                                                    </div>
+                                                    <span className="text-white font-medium group-hover:text-yellow-400 transition-colors text-sm sm:text-base whitespace-nowrap">
+                                                        {customer.firstName} {customer.lastName}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td className="px-3 sm:px-6 py-3 sm:py-4 text-gray-300 text-sm sm:text-base whitespace-nowrap">{customer.phone}</td>
+                                            <td className="hidden md:table-cell px-3 sm:px-6 py-3 sm:py-4 text-gray-300 text-sm sm:text-base">{customer.email || '-'}</td>
+                                            <td className="hidden lg:table-cell px-3 sm:px-6 py-3 sm:py-4 text-gray-400 text-xs sm:text-sm whitespace-nowrap">
+                                                {customer.createdAt ? format(new Date(customer.createdAt), 'MMM d, yyyy') : '-'}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 )}
 
                 {/* Pagination */}
-                {totalPages > 1 && (
-                    <div className="px-6 py-4 border-t border-white/10 flex items-center justify-between">
-                        <div className="text-sm text-gray-400">
-                            Page {page + 1} of {totalPages}
+                {
+                    totalPages > 1 && (
+                        <div className="px-6 py-4 border-t border-white/10 flex items-center justify-between">
+                            <div className="text-sm text-gray-400">
+                                Page {page + 1} of {totalPages}
+                            </div>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => handlePageChange(page - 1)}
+                                    disabled={page === 0}
+                                    className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                >
+                                    <ChevronLeft className="w-5 h-5" />
+                                </button>
+                                <button
+                                    onClick={() => handlePageChange(page + 1)}
+                                    disabled={page === totalPages - 1}
+                                    className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                >
+                                    <ChevronRight className="w-5 h-5" />
+                                </button>
+                            </div>
                         </div>
-                        <div className="flex gap-2">
-                            <button
-                                onClick={() => handlePageChange(page - 1)}
-                                disabled={page === 0}
-                                className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                            >
-                                <ChevronLeft className="w-5 h-5" />
-                            </button>
-                            <button
-                                onClick={() => handlePageChange(page + 1)}
-                                disabled={page === totalPages - 1}
-                                className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                            >
-                                <ChevronRight className="w-5 h-5" />
-                            </button>
-                        </div>
-                    </div>
-                )}
-            </div>
+                    )
+                }
+            </div >
 
             {selectedCustomer && user?.barbershopId && (
                 <CustomerDetailsModal
@@ -166,6 +170,6 @@ export default function CustomersPage() {
                     barbershopId={user.barbershopId}
                 />
             )}
-        </div>
+        </div >
     );
 }
