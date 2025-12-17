@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { serviceApi } from '@/lib/api';
 import { Service } from '@/types/service';
 import { CreateServiceFormData } from '@/lib/validations';
@@ -18,6 +19,7 @@ import { Plus, Loader } from 'lucide-react';
 export default function ServicesPage() {
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
+  const { t } = useLanguage();
 
   // State
   const [services, setServices] = useState<Service[]>([]);

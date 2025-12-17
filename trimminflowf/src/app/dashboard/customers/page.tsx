@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { customerApi } from '@/lib/api';
 import { Customer } from '@/types';
 import { Search, ChevronLeft, ChevronRight, User, Loader } from 'lucide-react';
@@ -10,6 +11,7 @@ import { format } from 'date-fns';
 
 export default function CustomersPage() {
     const { user } = useAuth();
+    const { t } = useLanguage();
     const [customers, setCustomers] = useState<Customer[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -65,7 +67,7 @@ export default function CustomersPage() {
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-white">Customers</h1>
+                    <h1 className="text-2xl font-bold text-white">{t.customers.title}</h1>
                     <p className="text-gray-400">Manage your client base</p>
                 </div>
 
@@ -73,7 +75,7 @@ export default function CustomersPage() {
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
                         type="text"
-                        placeholder="Search customers..."
+                        placeholder={t.customers.search}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full bg-black/20 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-yellow-400 transition-colors"

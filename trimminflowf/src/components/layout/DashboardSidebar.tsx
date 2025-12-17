@@ -5,6 +5,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
+import LanguageSelector from '@/components/LanguageSelector';
 import {
   LayoutDashboard,
   Calendar,
@@ -20,31 +22,32 @@ import {
 
 interface NavItem {
   id: string;
-  label: string;
+  labelKey: keyof typeof import('@/lib/translations').translations.en.sidebar;
   icon?: typeof LayoutDashboard;
   iconSvg?: string;
   href: string;
 }
 
 const navItems: NavItem[] = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
-  { id: 'calendar', label: 'Calendar', icon: Calendar, href: '/dashboard/calendar' },
-  { id: 'services', label: 'Services', icon: Scissors, href: '/dashboard/services' },
-  { id: 'barbers', label: 'Barbers', icon: Users, href: '/dashboard/barbers' },
-  { id: 'customers', label: 'Customers', icon: Users, href: '/dashboard/customers' },
+  { id: 'dashboard', labelKey: 'dashboard', icon: LayoutDashboard, href: '/dashboard' },
+  { id: 'calendar', labelKey: 'calendar', icon: Calendar, href: '/dashboard/calendar' },
+  { id: 'services', labelKey: 'services', icon: Scissors, href: '/dashboard/services' },
+  { id: 'barbers', labelKey: 'barbers', icon: Users, href: '/dashboard/barbers' },
+  { id: 'customers', labelKey: 'customers', icon: Users, href: '/dashboard/customers' },
   {
     id: 'analytics',
-    label: 'Analytics',
+    labelKey: 'analytics',
     iconSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="20" y2="10"></line><line x1="18" x2="18" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="16"></line></svg>`,
     href: '/dashboard/analytics'
   },
-  { id: 'qr', label: 'QR Codes', icon: QrCode, href: '/dashboard/qr' },
-  { id: 'settings', label: 'Settings', icon: Settings, href: '/dashboard/settings' },
+  { id: 'qr', labelKey: 'qrCodes', icon: QrCode, href: '/dashboard/qr' },
+  { id: 'settings', labelKey: 'settings', icon: Settings, href: '/dashboard/settings' },
 ];
 
 export default function DashboardSidebar() {
   const pathname = usePathname();
   const { logout } = useAuth();
+  const { t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isActive = (href: string) => {
@@ -129,24 +132,33 @@ export default function DashboardSidebar() {
                 href={item.href}
                 onClick={closeMobileMenu}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all group ${active
-                    ? 'bg-gradient-to-r from-yellow-400 to-amber-500 text-black shadow-lg shadow-yellow-400/20'
-                    : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                  ? 'bg-gradient-to-r from-yellow-400 to-amber-500 text-black shadow-lg shadow-yellow-400/20'
+                  : 'text-gray-400 hover:bg-white/5 hover:text-white'
                   }`}
               >
                 {item.iconSvg ? (
-                  <div className={`w-5 h-5 ${active ? 'brightness-0' : 'brightness-100 group-hover:brightness-125'}`}>
-                    <Image
-                      src={item.iconSvg}
-                      alt={item.label}
-                      width={20}
-                      height={20}
-                      className="w-full h-full object-contain"
+                  item.iconSvg.startsWith('<svg') ? (
+                    // Inline SVG string
+                    <div
+                      className={`w-5 h-5 ${active ? 'brightness-0' : 'brightness-100 group-hover:brightness-125'}`}
+                      dangerouslySetInnerHTML={{ __html: item.iconSvg }}
                     />
-                  </div>
+                  ) : (
+                    // Image path
+                    <div className={`w-5 h-5 ${active ? 'brightness-0' : 'brightness-100 group-hover:brightness-125'}`}>
+                      <Image
+                        src={item.iconSvg}
+                        alt={t.sidebar[item.labelKey]}
+                        width={20}
+                        height={20}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  )
                 ) : Icon ? (
                   <Icon className="w-5 h-5" />
                 ) : null}
-                <span className="font-medium">{item.label}</span>
+                <span className="font-medium">{t.sidebar[item.labelKey]}</span>
               </Link>
             );
           })}
@@ -160,8 +172,14 @@ export default function DashboardSidebar() {
             className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-white/5 hover:text-white rounded-xl transition-all w-full"
           >
             <Home className="w-5 h-5" />
-            <span className="font-medium">Home</span>
+            <span className="font-medium">{t.nav.home}</span>
           </Link>
+
+          {/* Language Selector */}
+          <div className="px-4 py-2">
+            <LanguageSelector />
+          </div>
+
           <button
             onClick={() => {
               logout();
@@ -170,7 +188,7 @@ export default function DashboardSidebar() {
             className="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-white/5 hover:text-white rounded-xl transition-all w-full"
           >
             <LogOut className="w-5 h-5" />
-            <span className="font-medium">Logout</span>
+            <span className="font-medium">{t.sidebar.logout}</span>
           </button>
         </div>
       </div>

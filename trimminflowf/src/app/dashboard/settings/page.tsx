@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { businessHoursApi } from '@/lib/api';
 import { BusinessHoursResponse, DAYS_OF_WEEK, DayOfWeek } from '@/types/businessHours';
 import { BusinessHoursFormData } from '@/lib/validations';
@@ -14,6 +15,7 @@ import { Button } from '@/components/ui/Button';
 export default function SettingsPage() {
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
+  const { t } = useLanguage();
 
   // State
   // We keep track of the form data for each day
@@ -279,6 +281,56 @@ export default function SettingsPage() {
               </label>
               <p className="text-gray-500 text-xs mt-2">Recommended: Square image, at least 400x400px (JPG, PNG)</p>
             </div>
+          </div>
+        </div>
+
+        {/* Email Reminders Toggle */}
+        <div className="mt-6 bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-400 to-blue-500 rounded-xl flex items-center justify-center">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">24-Hour Reminder Emails</h3>
+                <p className="text-gray-400 text-sm">Send automatic email reminders to customers 24 hours before their appointment</p>
+              </div>
+            </div>
+
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={user.barbershop?.reminderEmailsEnabled ?? true}
+                onChange={async (e) => {
+                  if (!user?.barbershopId) return;
+
+                  try {
+                    const response = await fetch(
+                      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1'}/barbershops/${user.barbershopId}/reminder-settings`,
+                      {
+                        method: 'PUT',
+                        credentials: 'include',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ reminderEmailsEnabled: e.target.checked }),
+                      }
+                    );
+
+                    if (response.ok) {
+                      setSuccessMessage(`Reminder emails ${e.target.checked ? 'enabled' : 'disabled'} successfully!`);
+                      setTimeout(() => window.location.reload(), 1500);
+                    } else {
+                      setError('Failed to update settings. Please try again.');
+                    }
+                  } catch (err) {
+                    setError('Failed to update settings. Please try again.');
+                  }
+                }}
+              />
+              <div className="w-14 h-7 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-500"></div>
+            </label>
           </div>
         </div>
       </div>

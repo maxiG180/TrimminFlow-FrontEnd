@@ -4,50 +4,41 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Navbar from "@/components/layout/Navbar";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Smartphone, Check, Star, ArrowRight, Play } from "lucide-react";
 
 export default function Home() {
+  const { t } = useLanguage();
+
   const features = [
     {
       iconSvg: "/svg_custom/schedule-svgrepo-com.svg",
-      title: "Smart Scheduling",
-      description:
-        "AI-powered appointment booking that maximizes your revenue and minimizes gaps in your schedule.",
+      titleKey: 'appointment' as const,
       gradient: "from-yellow-400 to-amber-500",
     },
     {
       iconSvg: "/svg_custom/people-who-support-svgrepo-com.svg",
-      title: "Customer Management",
-      description:
-        "Build lasting relationships with detailed customer profiles, preferences, and appointment history.",
+      titleKey: 'customer' as const,
       gradient: "from-amber-400 to-yellow-500",
     },
     {
       iconSvg: "/svg_custom/analytics-chart-diagram-pie-svgrepo-com.svg",
-      title: "Business Analytics",
-      description:
-        "Real-time insights into your revenue, peak hours, and growth opportunities.",
+      titleKey: 'analytics' as const,
       gradient: "from-yellow-500 to-amber-400",
     },
     {
       iconSvg: "/svg_custom/phone-svgrepo-com.svg",
-      title: "Mobile-First Booking",
-      description:
-        "Beautiful public booking page that converts browsers into loyal customers.",
+      titleKey: 'mobile' as const,
       gradient: "from-amber-500 to-yellow-400",
     },
     {
       iconSvg: "/svg_custom/clock-svgrepo-com.svg",
-      title: "Time Optimization",
-      description:
-        "Reduce no-shows by 80% with automated reminders and smart scheduling algorithms.",
+      titleKey: 'time' as const,
       gradient: "from-yellow-400 to-amber-600",
     },
     {
       iconSvg: "/svg_custom/electric_6994630.png",
-      title: "Instant Setup",
-      description:
-        "Go live in under 5 minutes. No technical knowledge required.",
+      titleKey: 'setup' as const,
       gradient: "from-amber-400 to-yellow-600",
     },
   ];
@@ -111,25 +102,23 @@ export default function Home() {
               transition={{ duration: 0.8 }}
             >
               <div className="inline-block bg-yellow-400/20 text-yellow-400 border border-yellow-400/30 rounded-full px-3 sm:px-4 py-1 mb-4 sm:mb-6 text-xs sm:text-sm">
-                Serving barbershops worldwide
+                {t.hero.badge}
               </div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold font-heading mb-4 sm:mb-6 tracking-tight">
-                Modernize Your
+                {t.hero.title}
                 <span className="bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent block font-heading">
-                  Barbershop
+                  {t.hero.subtitle}
                 </span>
               </h1>
               <p className="text-base sm:text-lg lg:text-xl text-gray-300 mb-6 sm:mb-8 leading-relaxed">
-                Transform your traditional barbershop into a modern business
-                powerhouse. Increase revenue by 40% with smart scheduling,
-                automated bookings, and customer insights.
+                {t.hero.description}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8 sm:mb-12">
                 <Link
                   href="/auth/register"
                   className="bg-gradient-to-r from-yellow-400 to-amber-500 text-black hover:from-yellow-500 hover:to-amber-600 text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-medium flex items-center justify-center"
                 >
-                  Start Free Trial
+                  {t.hero.ctaPrimary}
                   <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
                 </Link>
                 <Link
@@ -137,21 +126,21 @@ export default function Home() {
                   className="border border-white/20 text-white hover:bg-white/10 text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-medium flex items-center justify-center"
                 >
                   <Play className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                  View Demo
+                  {t.hero.ctaSecondary}
                 </Link>
               </div>
               <div className="flex flex-wrap items-center gap-4 sm:gap-8 text-xs sm:text-sm text-gray-400">
                 <div className="flex items-center gap-2">
                   <Check className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400 flex-shrink-0" />
-                  <span className="whitespace-nowrap">Free 14-day trial</span>
+                  <span className="whitespace-nowrap">{t.hero.feature1}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400 flex-shrink-0" />
-                  <span className="whitespace-nowrap">No credit card required</span>
+                  <span className="whitespace-nowrap">{t.hero.feature2}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400 flex-shrink-0" />
-                  <span className="whitespace-nowrap">Setup in 5 minutes</span>
+                  <span className="whitespace-nowrap">{t.hero.feature3}</span>
                 </div>
               </div>
             </motion.div>
@@ -162,16 +151,19 @@ export default function Home() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="relative hidden lg:block"
             >
-              {/* Screenshot Placeholder */}
-              <div className="relative z-10 bg-gray-800/30 backdrop-blur-xl rounded-3xl border-2 border-dashed border-white/20 p-8 sm:p-12 overflow-hidden aspect-video flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-gray-700/50 rounded-2xl flex items-center justify-center">
-                    <Smartphone className="w-6 h-6 sm:w-8 sm:h-8 text-gray-500" />
-                  </div>
-                  <p className="text-gray-500 font-medium text-sm sm:text-base">App Screenshot</p>
-                  <p className="text-gray-600 text-xs sm:text-sm mt-1">Coming Soon</p>
-                </div>
+              {/* Dashboard Screenshot */}
+              <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border border-white/20">
+                <Image
+                  src="/img/image.png"
+                  alt="TrimminFlow Dashboard"
+                  width={1920}
+                  height={1080}
+                  className="w-full h-auto"
+                  priority
+                />
               </div>
+              {/* Glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-amber-500/20 blur-3xl -z-10"></div>
             </motion.div>
           </div>
         </div>
@@ -182,9 +174,9 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-10 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-heading mb-4 sm:mb-6 tracking-tight">
-              Everything You Need to
+              {t.features.title}
               <span className="bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent block font-heading">
-                Scale Your Business
+                {t.features.subtitle}
               </span>
             </h2>
           </div>
@@ -196,19 +188,18 @@ export default function Home() {
               >
                 <Image
                   src={feature.iconSvg}
-                  alt={feature.title}
+                  alt={t.features[feature.titleKey].title}
                   width={64}
                   height={64}
-                  className={`object-contain mb-4 sm:mb-6 group-hover:scale-110 transition-transform ${
-                    feature.iconSvg.includes('people-who-support')
-                      ? 'w-14 h-14 sm:w-20 sm:h-20'
-                      : 'w-12 h-12 sm:w-16 sm:h-16'
-                  }`}
+                  className={`object-contain mb-4 sm:mb-6 group-hover:scale-110 transition-transform ${feature.iconSvg.includes('people-who-support')
+                    ? 'w-14 h-14 sm:w-20 sm:h-20'
+                    : 'w-12 h-12 sm:w-16 sm:h-16'
+                    }`}
                 />
                 <h3 className="text-xl sm:text-2xl font-bold font-heading mb-3 sm:mb-4 tracking-wide">
-                  {feature.title}
+                  {t.features[feature.titleKey].title}
                 </h3>
-                <p className="text-sm sm:text-base text-gray-300">{feature.description}</p>
+                <p className="text-sm sm:text-base text-gray-300">{t.features[feature.titleKey].description}</p>
               </div>
             ))}
           </div>

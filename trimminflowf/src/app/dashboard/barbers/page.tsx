@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { barberApi } from '@/lib/api';
 import { BarberResponse } from '@/types/barber';
 import { CreateBarberFormData, UpdateBarberFormData } from '@/lib/validations';
@@ -18,6 +19,7 @@ import { Plus, Loader } from 'lucide-react';
 export default function BarbersPage() {
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
+  const { t } = useLanguage();
 
   // State
   const [barbers, setBarbers] = useState<BarberResponse[]>([]);

@@ -11,6 +11,7 @@ export interface Barbershop {
   businessHours: string | null; // JSONB stored as string in backend
   qrCodeUrl?: string;
   logoUrl?: string;
+  reminderEmailsEnabled?: boolean;
   createdAt: string;
   updatedAt: string;
 }

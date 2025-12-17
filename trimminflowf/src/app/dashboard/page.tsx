@@ -11,12 +11,15 @@ import {
   Scissors,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import DashboardSidebar from '@/components/layout/DashboardSidebar';
 
 export default function Dashboard() {
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
+  const { t } = useLanguage();
   const [todayAppointments, setTodayAppointments] = useState<any[]>([]);
+  const [activeBarbers, setActiveBarbers] = useState<any[]>([]);
   const [stats, setStats] = useState({
     todayCount: 0,
     todayRevenue: 0,
@@ -73,6 +76,17 @@ export default function Dashboard() {
             .reduce((sum: number, a: any) => sum + (a.service?.price || 0), 0);
         }
 
+        // Fetch active barbers
+        const barbersResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1'}/barbers`,
+          { credentials: 'include' }
+        );
+
+        if (barbersResponse.ok) {
+          const barbersData = await barbersResponse.json();
+          setActiveBarbers((barbersData.content || barbersData).filter((b: any) => b.active !== false));
+        }
+
         setStats({
           todayCount: analyticsData.todayAppointments || 0,
           todayRevenue: todayRevenue,
@@ -101,7 +115,7 @@ export default function Dashboard() {
 
   const statsData = [
     {
-      title: "Today's Appointments",
+      title: t.dashboard.todayAppointments,
       value: stats.todayCount.toString(),
       change: `€${stats.todayRevenue.toFixed(2)}`,
       iconSvg: '/svg_custom/schedule-svgrepo-com.svg',
@@ -109,15 +123,15 @@ export default function Dashboard() {
       bgGradient: 'from-yellow-500/10 to-amber-600/10',
     },
     {
-      title: 'Total Appointments',
+      title: t.dashboard.totalAppointments,
       value: stats.totalCustomers.toString(),
-      change: `${stats.todayCount} today`,
+      change: `${stats.todayCount} ${t.dashboard.today}`,
       iconSvg: '/svg_custom/people-who-support-svgrepo-com.svg',
-      gradient: 'from-amber-500 to-yellow-600',
-      bgGradient: 'from-amber-500/10 to-yellow-600/10',
+      gradient: 'from-amber-400 to-yellow-500',
+      bgGradient: 'from-amber-400/10 to-yellow-500/10',
     },
     {
-      title: 'Total Revenue',
+      title: t.dashboard.weeklyRevenue,
       value: `€${stats.weeklyRevenue.toFixed(2)}`,
       change: 'All time',
       iconSvg: '/svg_custom/euro-banknote-svgrepo-com.svg',
@@ -164,7 +178,7 @@ export default function Dashboard() {
               className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-black rounded-xl hover:from-yellow-500 hover:to-amber-600 transition-all flex items-center justify-center gap-2 font-medium text-sm sm:text-base whitespace-nowrap"
             >
               <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-              New Appointment
+              {t.dashboard.newAppointment}
             </Link>
           </motion.div>
 
@@ -233,16 +247,37 @@ export default function Dashboard() {
                     height={28}
                     className="w-7 h-7"
                   />
-                  Today's Appointments
+                  {t.dashboard.todayAppointments}
                 </h2>
                 <Link href="/dashboard/calendar" className="text-yellow-400 hover:text-yellow-300 text-sm font-medium flex items-center gap-1">
-                  View All
+                  {t.dashboard.viewAll}
                   <ArrowUpRight className="w-4 h-4" />
                 </Link>
               </div>
 
               <div className="space-y-3">
-                <p className="text-gray-400 text-center py-8">No appointments scheduled yet</p>
+                {todayAppointments.length > 0 ? (
+                  todayAppointments.map((apt) => (
+                    <div key={apt.id} className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-semibold text-white">{apt.customerName}</span>
+                        <span className={`px-2 py-1 rounded-lg text-xs font-medium ${apt.status === 'CONFIRMED' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
+                          }`}>
+                          {apt.status}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-400">{apt.service.name}</span>
+                        <span className="text-yellow-400 font-semibold">€{apt.service.price}</span>
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        {apt.barber.firstName} {apt.barber.lastName} • {new Date(apt.appointmentDateTime).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-400 text-center py-8">{t.dashboard.noAppointments}</p>
+                )}
               </div>
             </motion.div>
 
@@ -263,34 +298,48 @@ export default function Dashboard() {
                     height={20}
                     className="w-5 h-5"
                   />
-                  Active Barbers
+                  {t.dashboard.activeBarbers}
                 </h3>
                 <div className="space-y-3">
-                  <p className="text-gray-400 text-center py-4 text-sm">No barbers added yet</p>
+                  {activeBarbers.length > 0 ? (
+                    activeBarbers.map((barber) => (
+                      <div key={barber.id} className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-lg p-3 hover:bg-white/10 transition-all">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 flex items-center justify-center text-black font-bold">
+                          {barber.firstName[0]}{barber.lastName[0]}
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-white font-medium text-sm">{barber.firstName} {barber.lastName}</p>
+                          <p className="text-green-400 text-xs">● Active</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-400 text-center py-4 text-sm">{t.dashboard.noBarbers}</p>
+                  )}
                 </div>
               </div>
 
               {/* Quick Actions */}
               <div className="rounded-3xl bg-gradient-to-br from-gray-800/40 to-gray-900/40 backdrop-blur-xl border border-white/10 p-6">
-                <h3 className="text-lg font-bold text-white mb-4">Quick Actions</h3>
+                <h3 className="text-lg font-bold text-white mb-4">{t.dashboard.quickActions}</h3>
                 <div className="space-y-2">
                   <Link
                     href="/dashboard/appointments/new"
                     className="block w-full px-4 py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-black rounded-xl hover:from-yellow-500 hover:to-amber-600 transition-all font-medium text-center"
                   >
-                    Add Appointment
+                    {t.dashboard.addAppointment}
                   </Link>
                   <Link
                     href="/dashboard/customers"
                     className="block w-full px-4 py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl transition-all font-medium text-center"
                   >
-                    Manage Customers
+                    {t.dashboard.manageCustomers}
                   </Link>
                   <Link
                     href="/dashboard/calendar"
                     className="block w-full px-4 py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl transition-all font-medium text-center"
                   >
-                    View Calendar
+                    {t.dashboard.viewCalendar}
                   </Link>
                 </div>
               </div>
