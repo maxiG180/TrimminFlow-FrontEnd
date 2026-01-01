@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { customerApi } from '@/lib/api';
 import { Customer } from '@/types';
-import { Search, ChevronLeft, ChevronRight, User, Loader } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, User } from 'lucide-react';
 import CustomerDetailsModal from '@/components/customers/CustomerDetailsModal';
 import { format } from 'date-fns';
 
@@ -20,18 +20,11 @@ export default function CustomersPage() {
     const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // Debounced search
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setPage(0); // Reset page on search
-            loadCustomers(0, searchTerm);
-        }, 500);
-
-        return () => clearTimeout(timer);
-    }, [searchTerm]);
-
-    const loadCustomers = async (pageIndex: number, search: string) => {
-        if (!user?.barbershopId) return;
+    const loadCustomers = useCallback(async (pageIndex: number, search: string) => {
+        if (!user?.barbershopId) {
+            setIsLoading(false);
+            return;
+        }
 
         try {
             setIsLoading(true);
@@ -47,7 +40,17 @@ export default function CustomersPage() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [user?.barbershopId]);
+
+    // Debounced search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setPage(0); // Reset page on search
+            loadCustomers(0, searchTerm);
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [searchTerm, loadCustomers]);
 
     const handlePageChange = (newPage: number) => {
         if (newPage >= 0 && newPage < totalPages) {
@@ -86,7 +89,7 @@ export default function CustomersPage() {
             <div className="bg-black/20 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden">
                 {isLoading ? (
                     <div className="flex items-center justify-center p-12">
-                        <Loader className="w-8 h-8 text-yellow-400 animate-spin" />
+                        <div className="w-8 h-8 rounded-full border-b-2 border-yellow-400 animate-spin" />
                     </div>
                 ) : customers.length === 0 ? (
                     <div className="text-center p-12 text-gray-400">

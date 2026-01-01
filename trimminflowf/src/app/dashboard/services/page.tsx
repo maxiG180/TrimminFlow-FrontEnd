@@ -8,7 +8,6 @@ import { serviceApi } from '@/lib/api';
 import { Service } from '@/types/service';
 import { CreateServiceFormData } from '@/lib/validations';
 import { PageResponse } from '@/types/pagination';
-import DashboardSidebar from '@/components/layout/DashboardSidebar';
 import { ServiceCard } from '@/components/services/ServiceCard';
 import { ServiceForm } from '@/components/services/ServiceForm';
 import { SearchBar } from '@/components/ui/SearchBar';
@@ -149,8 +148,6 @@ export default function ServicesPage() {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">
-      <DashboardSidebar />
-
       <div className="flex-1 p-8">
         {/* Header */}
         <div className="mb-8">

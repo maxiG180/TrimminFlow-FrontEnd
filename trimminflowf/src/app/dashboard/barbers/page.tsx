@@ -8,7 +8,6 @@ import { barberApi } from '@/lib/api';
 import { BarberResponse } from '@/types/barber';
 import { CreateBarberFormData, UpdateBarberFormData } from '@/lib/validations';
 import { PageResponse } from '@/types/pagination';
-import DashboardSidebar from '@/components/layout/DashboardSidebar';
 import { BarberCard } from '@/components/barbers/BarberCard';
 import { BarberForm } from '@/components/barbers/BarberForm';
 import { SearchBar } from '@/components/ui/SearchBar';
@@ -148,8 +147,6 @@ export default function BarbersPage() {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">
-      <DashboardSidebar />
-
       <div className="flex-1 p-8">
         {/* Header */}
         <div className="mb-8">

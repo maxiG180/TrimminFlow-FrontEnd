@@ -7,7 +7,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { businessHoursApi } from '@/lib/api';
 import { BusinessHoursResponse, DAYS_OF_WEEK, DayOfWeek } from '@/types/businessHours';
 import { BusinessHoursFormData } from '@/lib/validations';
-import DashboardSidebar from '@/components/layout/DashboardSidebar';
 import { BusinessHoursEditor } from '@/components/businessHours/BusinessHoursEditor';
 import { Loader, Clock, Save } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -126,8 +125,6 @@ export default function SettingsPage() {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">
-      <DashboardSidebar />
-
       <div className="flex-1 p-8">
         {/* Header */}
         <div className="mb-8 flex justify-between items-start">

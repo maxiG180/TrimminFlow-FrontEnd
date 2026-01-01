@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import DashboardSidebar from '@/components/layout/DashboardSidebar';
 import { Loader, TrendingUp, DollarSign, Calendar, Users, Award } from 'lucide-react';
 
 interface AnalyticsData {
@@ -75,8 +74,6 @@ export default function AnalyticsPage() {
 
     return (
         <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">
-            <DashboardSidebar />
-
             <div className="flex-1 p-8">
                 {/* Header */}
                 <div className="mb-8">

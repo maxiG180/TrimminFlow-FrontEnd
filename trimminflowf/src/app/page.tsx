@@ -115,7 +115,7 @@ export default function Home() {
               </p>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8 sm:mb-12">
                 <Link
-                  href="/auth/register"
+                  href="/register"
                   className="bg-gradient-to-r from-yellow-400 to-amber-500 text-black hover:from-yellow-500 hover:to-amber-600 text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-medium flex items-center justify-center"
                 >
                   {t.hero.ctaPrimary}
@@ -272,7 +272,7 @@ export default function Home() {
             </div>
             <div className="text-center">
               <Link
-                href="/auth/register"
+                href="/register"
                 className="inline-flex items-center justify-center w-full bg-gradient-to-r from-yellow-400 to-amber-500 text-black hover:from-yellow-500 hover:to-amber-600 text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-medium"
               >
                 Start Free 14-Day Trial

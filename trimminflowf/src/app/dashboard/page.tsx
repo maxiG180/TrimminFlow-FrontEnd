@@ -12,7 +12,6 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import DashboardSidebar from '@/components/layout/DashboardSidebar';
 
 export default function Dashboard() {
   const router = useRouter();
@@ -38,11 +37,11 @@ export default function Dashboard() {
   // Fetch dashboard data
   useEffect(() => {
     if (user?.barbershopId) {
-      loadDashboardData();
+      fetchDashboardData();
     }
   }, [user]);
 
-  const loadDashboardData = async () => {
+  const fetchDashboardData = async () => {
     try {
       setLoading(true);
 
@@ -55,7 +54,7 @@ export default function Dashboard() {
       if (analyticsResponse.ok) {
         const analyticsData = await analyticsResponse.json();
 
-        // Fetch today's appointments
+        // Fetch appointments for today
         const today = new Date();
         const startOfDay = new Date(today.setHours(0, 0, 0, 0)).toISOString();
         const endOfDay = new Date(today.setHours(23, 59, 59, 999)).toISOString();
@@ -68,15 +67,15 @@ export default function Dashboard() {
         let todayRevenue = 0;
         if (appointmentsResponse.ok) {
           const appointmentsData = await appointmentsResponse.json();
-          setTodayAppointments(appointmentsData.content || []);
-
-          // Calculate today's revenue
-          todayRevenue = (appointmentsData.content || [])
-            .filter((a: any) => a.status === 'COMPLETED')
-            .reduce((sum: number, a: any) => sum + (a.service?.price || 0), 0);
+          const todayAppts = (appointmentsData.content || appointmentsData).filter((apt: any) => {
+            const aptDate = new Date(apt.appointmentDateTime);
+            return aptDate.toDateString() === new Date().toDateString();
+          });
+          setTodayAppointments(todayAppts);
+          todayRevenue = todayAppts.reduce((sum: number, apt: any) => sum + (apt.service?.price || 0), 0);
         }
 
-        // Fetch active barbers
+        // Fetch barbers
         const barbersResponse = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1'}/barbers`,
           { credentials: 'include' }
@@ -118,15 +117,15 @@ export default function Dashboard() {
       title: t.dashboard.todayAppointments,
       value: stats.todayCount.toString(),
       change: `€${stats.todayRevenue.toFixed(2)}`,
-      iconSvg: '/svg_custom/schedule-svgrepo-com.svg',
-      gradient: 'from-yellow-500 to-amber-600',
-      bgGradient: 'from-yellow-500/10 to-amber-600/10',
+      iconSvg: '/svg_custom/calendar-days-svgrepo-com.svg',
+      gradient: 'from-yellow-400 to-amber-500',
+      bgGradient: 'from-yellow-400/10 to-amber-500/10',
     },
     {
       title: t.dashboard.totalAppointments,
       value: stats.totalCustomers.toString(),
-      change: `${stats.todayCount} ${t.dashboard.today}`,
-      iconSvg: '/svg_custom/people-who-support-svgrepo-com.svg',
+      change: 'All time',
+      iconSvg: '/svg_custom/users-svgrepo-com.svg',
       gradient: 'from-amber-400 to-yellow-500',
       bgGradient: 'from-amber-400/10 to-yellow-500/10',
     },
@@ -154,8 +153,8 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800" suppressHydrationWarning>
-      <DashboardSidebar />
+    <div className="p-6" suppressHydrationWarning>
+
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto">

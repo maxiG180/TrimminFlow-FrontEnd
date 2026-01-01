@@ -1,7 +1,6 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import DashboardSidebar from '@/components/layout/DashboardSidebar';
 import { QrCode, Copy, ExternalLink, Check, Download, Share2, Printer } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -20,9 +19,7 @@ export default function QRPage() {
 
     if (!user?.barbershopId) {
         return (
-            <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">
-                <DashboardSidebar />
-                <div className="flex-1 flex items-center justify-center">
+            <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">                <div className="flex-1 flex items-center justify-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400"></div>
                 </div>
             </div>
@@ -155,8 +152,6 @@ export default function QRPage() {
 
             {/* Screen Version */}
             <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white print:hidden">
-                <DashboardSidebar />
-
                 <main className="flex-1 p-8 overflow-y-auto">
                     {/* Header */}
                     <header className="mb-8">

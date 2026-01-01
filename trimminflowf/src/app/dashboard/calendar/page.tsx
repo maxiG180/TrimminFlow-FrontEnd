@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Plus, X, Clock, Calendar as CalendarIcon, User, Scissors, Check, Ban, AlertCircle } from 'lucide-react';
-import DashboardSidebar from '@/components/layout/DashboardSidebar';
 import { useAuth } from '@/contexts/AuthContext';
 import { appointmentApi, barberApi, serviceApi, businessHoursApi } from '@/lib/api';
 import { Appointment, AppointmentStatus, CreateAppointmentRequest } from '@/types/appointment';
@@ -242,9 +241,7 @@ export default function CalendarPage() {
 
   if (loading && appointments.length === 0) {
     return (
-      <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">
-        <DashboardSidebar />
-        <div className="flex-1 flex items-center justify-center">
+      <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">        <div className="flex-1 flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400"></div>
         </div>
       </div>
@@ -253,8 +250,6 @@ export default function CalendarPage() {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
-      <DashboardSidebar />
-
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Header Section */}
         <header className="px-8 py-6 border-b border-white/10 flex items-center justify-between shrink-0">
