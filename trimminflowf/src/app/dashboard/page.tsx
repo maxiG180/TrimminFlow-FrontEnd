@@ -215,8 +215,8 @@ export default function Dashboard() {
                   <p className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-2 sm:mb-3 tracking-tight">{stat.value}</p>
                   <div className="flex items-center gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 bg-black/30 rounded-lg w-fit">
                     <Image
-                      src="/svg_custom/euro-banknote-svgrepo-com.svg"
-                      alt="Trending"
+                      src={stat.iconSvg}
+                      alt={stat.title}
                       width={14}
                       height={14}
                       className="w-3 h-3 sm:w-3.5 sm:h-3.5"
