@@ -1,11 +1,13 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { QrCode, Copy, ExternalLink, Check, Download, Share2, Printer } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function QRPage() {
     const { user } = useAuth();
+    const { t } = useLanguage();
     const [copied, setCopied] = useState(false);
     const [shopName, setShopName] = useState('');
 
@@ -20,8 +22,8 @@ export default function QRPage() {
     if (!user?.barbershopId) {
         return (
             <div className="flex min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">                <div className="flex-1 flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400"></div>
-                </div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400"></div>
+            </div>
             </div>
         );
     }
@@ -104,7 +106,7 @@ export default function QRPage() {
                             {shopName || 'TRIMMINFLOW'}
                         </h1>
                         <p style={{ color: '#D1D5DB', fontSize: '24px', fontWeight: '600' }}>
-                            Book Your Appointment
+                            {t.qr.bookYourAppointment}
                         </p>
                     </div>
 
@@ -126,7 +128,7 @@ export default function QRPage() {
                     {/* Instructions */}
                     <div style={{ marginTop: '40px' }}>
                         <p style={{ color: '#9CA3AF', fontSize: '20px', marginBottom: '12px' }}>
-                            Scan the QR code to book online
+                            {t.qr.scanQRCode}
                         </p>
                         <p style={{
                             color: '#6B7280',
@@ -144,7 +146,7 @@ export default function QRPage() {
                     {/* Decorative Elements */}
                     <div style={{ marginTop: '60px', paddingTop: '40px', borderTop: '2px solid rgba(251, 191, 36, 0.2)' }}>
                         <p style={{ color: '#6B7280', fontSize: '14px' }}>
-                            Powered by TrimminFlow
+                            {t.qr.poweredBy}
                         </p>
                     </div>
                 </div>
@@ -156,9 +158,9 @@ export default function QRPage() {
                     {/* Header */}
                     <header className="mb-8">
                         <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-gray-100 to-yellow-200 bg-clip-text text-transparent">
-                            QR Code & Booking Link
+                            {t.qr.title}
                         </h1>
-                        <p className="text-gray-400 mt-1">Share your booking page with customers</p>
+                        <p className="text-gray-400 mt-1">{t.qr.subtitle}</p>
                     </header>
 
                     <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
@@ -169,8 +171,8 @@ export default function QRPage() {
                                     <QrCode className="w-5 h-5 text-yellow-400" />
                                 </div>
                                 <div>
-                                    <h2 className="text-xl font-bold text-white">QR Code</h2>
-                                    <p className="text-gray-400 text-sm">Scan to book</p>
+                                    <h2 className="text-xl font-bold text-white">{t.qr.qrCode}</h2>
+                                    <p className="text-gray-400 text-sm">{t.qr.scanToBook}</p>
                                 </div>
                             </div>
 
@@ -188,7 +190,7 @@ export default function QRPage() {
                                     className="w-full px-4 py-3 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-yellow-400/20"
                                 >
                                     <Printer className="w-5 h-5" />
-                                    Print Professional Poster
+                                    {t.qr.printPoster}
                                 </button>
 
                                 <button
@@ -196,14 +198,14 @@ export default function QRPage() {
                                     className="w-full px-4 py-3 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-xl flex items-center justify-center gap-2 transition-all border border-white/10"
                                 >
                                     <Download className="w-5 h-5" />
-                                    Download QR Code
+                                    {t.qr.downloadQR}
                                 </button>
                             </div>
 
                             <div className="mt-6 p-4 bg-blue-400/10 border border-blue-400/20 rounded-xl">
                                 <p className="text-blue-400 text-xs">
-                                    <strong className="block mb-1">💡 Tip:</strong>
-                                    Click "Print Professional Poster" to create a beautiful, print-ready design with your shop name!
+                                    <strong className="block mb-1">💡 {t.qr.tip}</strong>
+                                    {t.qr.tipMessage}
                                 </p>
                             </div>
                         </div>
@@ -215,13 +217,13 @@ export default function QRPage() {
                                     <ExternalLink className="w-5 h-5 text-yellow-400" />
                                 </div>
                                 <div>
-                                    <h2 className="text-xl font-bold text-white">Booking Link</h2>
-                                    <p className="text-gray-400 text-sm">Share anywhere</p>
+                                    <h2 className="text-xl font-bold text-white">{t.qr.bookingLink}</h2>
+                                    <p className="text-gray-400 text-sm">{t.qr.shareAnywhere}</p>
                                 </div>
                             </div>
 
                             <div className="mb-6">
-                                <label className="text-sm text-gray-400 mb-2 block">Your Public Booking URL</label>
+                                <label className="text-sm text-gray-400 mb-2 block">{t.qr.publicBookingURL}</label>
                                 <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                                     <p className="text-gray-300 text-sm break-all font-mono">{bookingUrl}</p>
                                 </div>
@@ -235,12 +237,12 @@ export default function QRPage() {
                                     {copied ? (
                                         <>
                                             <Check className="w-5 h-5" />
-                                            Copied to Clipboard!
+                                            {t.qr.copiedToClipboard}
                                         </>
                                     ) : (
                                         <>
                                             <Copy className="w-5 h-5" />
-                                            Copy Link
+                                            {t.qr.copyLink}
                                         </>
                                     )}
                                 </button>
@@ -250,7 +252,7 @@ export default function QRPage() {
                                     className="w-full px-4 py-3 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-xl flex items-center justify-center gap-2 transition-all border border-white/10"
                                 >
                                     <Share2 className="w-5 h-5" />
-                                    Share Link
+                                    {t.qr.shareLink}
                                 </button>
 
                                 <a
@@ -260,20 +262,20 @@ export default function QRPage() {
                                     className="w-full px-4 py-3 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-xl flex items-center justify-center gap-2 transition-all border border-white/10"
                                 >
                                     <ExternalLink className="w-5 h-5" />
-                                    Preview Booking Page
+                                    {t.qr.previewBookingPage}
                                 </a>
                             </div>
 
                             <div className="space-y-3">
                                 <div className="p-4 bg-white/5 border border-white/10 rounded-xl">
-                                    <p className="text-gray-400 text-xs mb-1">Barbershop ID</p>
+                                    <p className="text-gray-400 text-xs mb-1">{t.qr.barbershopID}</p>
                                     <code className="text-white text-sm font-mono block break-all">{user.barbershopId}</code>
                                 </div>
 
                                 <div className="p-4 bg-green-400/10 border border-green-400/20 rounded-xl">
                                     <p className="text-green-400 text-xs">
-                                        <strong className="block mb-1">✅ How to use:</strong>
-                                        Share this link on social media, your website, or send it directly to customers via WhatsApp, email, or SMS!
+                                        <strong className="block mb-1">✅ {t.qr.howToUse}</strong>
+                                        {t.qr.howToUseMessage}
                                     </p>
                                 </div>
                             </div>
@@ -282,22 +284,22 @@ export default function QRPage() {
 
                     {/* Usage Guide */}
                     <div className="max-w-6xl mx-auto mt-8 bg-black/20 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
-                        <h3 className="text-lg font-bold text-white mb-4">📱 Where to Share Your Booking Link</h3>
+                        <h3 className="text-lg font-bold text-white mb-4">📱 {t.qr.whereToShare}</h3>
                         <div className="grid md:grid-cols-3 gap-4">
                             <div className="p-4 bg-white/5 rounded-xl border border-white/10">
                                 <div className="text-2xl mb-2">🌐</div>
-                                <h4 className="font-semibold text-white mb-1">Website</h4>
-                                <p className="text-gray-400 text-sm">Add a "Book Now" button linking to this URL</p>
+                                <h4 className="font-semibold text-white mb-1">{t.qr.website}</h4>
+                                <p className="text-gray-400 text-sm">{t.qr.websiteDesc}</p>
                             </div>
                             <div className="p-4 bg-white/5 rounded-xl border border-white/10">
                                 <div className="text-2xl mb-2">📱</div>
-                                <h4 className="font-semibold text-white mb-1">Social Media</h4>
-                                <p className="text-gray-400 text-sm">Share on Instagram, Facebook, or Google Business</p>
+                                <h4 className="font-semibold text-white mb-1">{t.qr.socialMedia}</h4>
+                                <p className="text-gray-400 text-sm">{t.qr.socialMediaDesc}</p>
                             </div>
                             <div className="p-4 bg-white/5 rounded-xl border border-white/10">
                                 <div className="text-2xl mb-2">💬</div>
-                                <h4 className="font-semibold text-white mb-1">Direct Messaging</h4>
-                                <p className="text-gray-400 text-sm">Send via WhatsApp, SMS, or email to customers</p>
+                                <h4 className="font-semibold text-white mb-1">{t.qr.directMessaging}</h4>
+                                <p className="text-gray-400 text-sm">{t.qr.directMessagingDesc}</p>
                             </div>
                         </div>
                     </div>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Loader, TrendingUp, DollarSign, Calendar, Users, Award } from 'lucide-react';
 
 interface AnalyticsData {
@@ -22,6 +23,7 @@ interface AnalyticsData {
 export default function AnalyticsPage() {
     const router = useRouter();
     const { user, isAuthenticated } = useAuth();
+    const { t } = useLanguage();
     const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -54,10 +56,10 @@ export default function AnalyticsPage() {
                 const data = await response.json();
                 setAnalytics(data);
             } else {
-                setError('Failed to load analytics');
+                setError(t.analytics.failedToLoad);
             }
         } catch (err) {
-            setError('Failed to load analytics');
+            setError(t.analytics.failedToLoad);
             console.error(err);
         } finally {
             setLoading(false);
@@ -77,8 +79,8 @@ export default function AnalyticsPage() {
             <div className="flex-1 p-8">
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-white mb-2">Analytics</h1>
-                    <p className="text-gray-400">Track your barbershop's performance</p>
+                    <h1 className="text-3xl font-bold text-white mb-2">{t.analytics.title}</h1>
+                    <p className="text-gray-400">{t.analytics.subtitle}</p>
                 </div>
 
                 {error && (
@@ -98,37 +100,37 @@ export default function AnalyticsPage() {
                             {/* Total Revenue */}
                             <div className="bg-gradient-to-br from-yellow-400/10 to-amber-500/10 backdrop-blur-sm border border-yellow-400/20 rounded-2xl p-6">
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className="text-gray-400 text-sm">Total Revenue</span>
+                                    <span className="text-gray-400 text-sm">{t.analytics.totalRevenue}</span>
                                     <DollarSign className="w-5 h-5 text-yellow-400" />
                                 </div>
                                 <div className="text-3xl font-bold text-white">€{analytics.totalRevenue.toFixed(2)}</div>
-                                <div className="text-xs text-gray-500 mt-1">Avg: €{analytics.averageRevenue.toFixed(2)}/appt</div>
+                                <div className="text-xs text-gray-500 mt-1">{t.analytics.averagePerAppointment}: €{analytics.averageRevenue.toFixed(2)}/appt</div>
                             </div>
 
                             {/* Total Appointments */}
                             <div className="bg-gradient-to-br from-blue-400/10 to-blue-500/10 backdrop-blur-sm border border-blue-400/20 rounded-2xl p-6">
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className="text-gray-400 text-sm">Total Appointments</span>
+                                    <span className="text-gray-400 text-sm">{t.analytics.totalAppointments}</span>
                                     <Calendar className="w-5 h-5 text-blue-400" />
                                 </div>
                                 <div className="text-3xl font-bold text-white">{analytics.totalAppointments}</div>
-                                <div className="text-xs text-gray-500 mt-1">{analytics.completedAppointments} completed</div>
+                                <div className="text-xs text-gray-500 mt-1">{analytics.completedAppointments} {t.analytics.completed}</div>
                             </div>
 
                             {/* This Week */}
                             <div className="bg-gradient-to-br from-green-400/10 to-green-500/10 backdrop-blur-sm border border-green-400/20 rounded-2xl p-6">
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className="text-gray-400 text-sm">This Week</span>
+                                    <span className="text-gray-400 text-sm">{t.analytics.thisWeek}</span>
                                     <TrendingUp className="w-5 h-5 text-green-400" />
                                 </div>
                                 <div className="text-3xl font-bold text-white">{analytics.weekAppointments}</div>
-                                <div className="text-xs text-gray-500 mt-1">{analytics.todayAppointments} today</div>
+                                <div className="text-xs text-gray-500 mt-1">{analytics.todayAppointments} {t.analytics.todayCount}</div>
                             </div>
 
                             {/* Completion Rate */}
                             <div className="bg-gradient-to-br from-purple-400/10 to-purple-500/10 backdrop-blur-sm border border-purple-400/20 rounded-2xl p-6">
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className="text-gray-400 text-sm">Completion Rate</span>
+                                    <span className="text-gray-400 text-sm">{t.analytics.completionRate}</span>
                                     <Award className="w-5 h-5 text-purple-400" />
                                 </div>
                                 <div className="text-3xl font-bold text-white">
@@ -136,7 +138,7 @@ export default function AnalyticsPage() {
                                         ? ((analytics.completedAppointments / analytics.totalAppointments) * 100).toFixed(1)
                                         : 0}%
                                 </div>
-                                <div className="text-xs text-gray-500 mt-1">{analytics.noShowAppointments} no-shows</div>
+                                <div className="text-xs text-gray-500 mt-1">{analytics.noShowAppointments} {t.analytics.noShows}</div>
                             </div>
                         </div>
 
@@ -146,7 +148,7 @@ export default function AnalyticsPage() {
                             <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
                                 <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                                     <TrendingUp className="w-5 h-5 text-yellow-400" />
-                                    Popular Services
+                                    {t.analytics.popularServices}
                                 </h2>
                                 <div className="space-y-3">
                                     {analytics.popularServices.slice(0, 5).map((service, index) => (
@@ -154,7 +156,7 @@ export default function AnalyticsPage() {
                                             <div className="flex-1">
                                                 <div className="flex items-center justify-between mb-1">
                                                     <span className="text-white font-medium">{service.serviceName}</span>
-                                                    <span className="text-gray-400 text-sm">{service.bookingCount} bookings</span>
+                                                    <span className="text-gray-400 text-sm">{service.bookingCount} {t.analytics.bookings}</span>
                                                 </div>
                                                 <div className="w-full bg-gray-700 rounded-full h-2">
                                                     <div
@@ -175,7 +177,7 @@ export default function AnalyticsPage() {
                             <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
                                 <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                                     <Users className="w-5 h-5 text-blue-400" />
-                                    Barber Performance
+                                    {t.analytics.barberPerformance}
                                 </h2>
                                 <div className="space-y-3">
                                     {analytics.barberPerformance.slice(0, 5).map((barber, index) => (
@@ -183,7 +185,7 @@ export default function AnalyticsPage() {
                                             <div className="flex-1">
                                                 <div className="flex items-center justify-between mb-1">
                                                     <span className="text-white font-medium">{barber.barberName}</span>
-                                                    <span className="text-gray-400 text-sm">{barber.completedAppointments} completed</span>
+                                                    <span className="text-gray-400 text-sm">{barber.completedAppointments} {t.analytics.completedAppointments}</span>
                                                 </div>
                                                 <div className="w-full bg-gray-700 rounded-full h-2">
                                                     <div
@@ -203,7 +205,7 @@ export default function AnalyticsPage() {
                     </div>
                 ) : (
                     <div className="text-center text-gray-400 py-20">
-                        No analytics data available
+                        {t.analytics.noData}
                     </div>
                 )}
             </div>
