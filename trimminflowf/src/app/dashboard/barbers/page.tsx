@@ -68,7 +68,7 @@ export default function BarbersPage() {
       setTotalPages(response.totalPages);
       setTotalElements(response.totalElements);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load barbers');
+      setError(err.response?.data?.message || t.barbers.loadError);
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -85,10 +85,10 @@ export default function BarbersPage() {
     try {
       if (editingBarber) {
         await barberApi.update(user.barbershopId, editingBarber.id, data);
-        setSuccessMessage('Barber updated successfully!');
+        setSuccessMessage(t.barbers.updateSuccess);
       } else {
         await barberApi.create(user.barbershopId, data as CreateBarberFormData);
-        setSuccessMessage('Barber added successfully!');
+        setSuccessMessage(t.barbers.createSuccess);
       }
 
       setShowModal(false);
@@ -97,7 +97,7 @@ export default function BarbersPage() {
 
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to save barber');
+      setError(err.response?.data?.message || t.barbers.createError);
     } finally {
       setIsSubmitting(false);
     }
@@ -110,15 +110,15 @@ export default function BarbersPage() {
 
   const handleDelete = async (barberId: string) => {
     if (!user?.barbershopId) return;
-    if (!confirm('Are you sure you want to delete this barber? This action will deactivate them.')) return;
+    if (!confirm(t.barbers.deleteConfirm)) return;
 
     try {
       await barberApi.delete(user.barbershopId, barberId);
-      setSuccessMessage('Barber deleted successfully!');
+      setSuccessMessage(t.barbers.deleteSuccess);
       await loadBarbers();
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete barber');
+      setError(err.response?.data?.message || t.barbers.deleteError);
     }
   };
 
@@ -150,9 +150,9 @@ export default function BarbersPage() {
       <div className="flex-1 p-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Barbers Management</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">{t.barbers.management}</h1>
           <p className="text-gray-400">
-            Manage your team • {totalElements} total barber{totalElements !== 1 ? 's' : ''}
+            {t.barbers.managementDescription} • {totalElements} {totalElements !== 1 ? t.barbers.totalBarbersPlural : t.barbers.totalBarbers}
           </p>
         </div>
 
@@ -174,12 +174,12 @@ export default function BarbersPage() {
             <SearchBar
               value={searchTerm}
               onChange={handleSearchChange}
-              placeholder="Search barbers by name or email..."
+              placeholder={t.barbers.searchPlaceholder}
             />
           </div>
           <Button onClick={() => setShowModal(true)} className="whitespace-nowrap">
             <Plus className="w-5 h-5 mr-2" />
-            Add Barber
+            {t.barbers.addBarber}
           </Button>
         </div>
 
@@ -192,13 +192,13 @@ export default function BarbersPage() {
           <div className="text-center py-20">
             <div className="text-gray-400 mb-4">
               {searchTerm
-                ? 'No barbers found matching your search.'
-                : 'No barbers yet. Add your first team member to get started!'}
+                ? t.barbers.noBarbersFound
+                : t.barbers.noBarbersYet}
             </div>
             {!searchTerm && (
               <Button onClick={() => setShowModal(true)}>
                 <Plus className="w-5 h-5 mr-2" />
-                Add Your First Barber
+                {t.barbers.addFirstBarber}
               </Button>
             )}
           </div>

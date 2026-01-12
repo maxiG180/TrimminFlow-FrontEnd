@@ -116,7 +116,7 @@ export default function DashboardSidebar() {
           </div>
           <div>
             <h2 className="text-white font-bold">TRIMMINFLOW</h2>
-            <p className="text-xs text-gray-400">Dashboard</p>
+            <p className="text-xs text-gray-400">{t.sidebar.dashboard}</p>
           </div>
         </div>
 

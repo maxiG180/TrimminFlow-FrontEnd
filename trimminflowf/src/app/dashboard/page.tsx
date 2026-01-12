@@ -106,7 +106,7 @@ export default function Dashboard() {
       <div className="min-h-screen bg-gradient-to-br from-[#1a1a1a] to-[#2d2d2d] flex items-center justify-center" suppressHydrationWarning>
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400 mx-auto"></div>
-          <p className="mt-4 text-gray-400">Loading...</p>
+          <p className="mt-4 text-gray-400">{t.common.loading}</p>
         </div>
       </div>
     );
@@ -124,7 +124,7 @@ export default function Dashboard() {
     {
       title: t.dashboard.totalAppointments,
       value: stats.totalCustomers.toString(),
-      change: 'All time',
+      change: t.dashboard.allTime,
       iconSvg: '/svg_custom/people-who-support-svgrepo-com.svg',
       gradient: 'from-amber-400 to-yellow-500',
       bgGradient: 'from-amber-400/10 to-yellow-500/10',
@@ -132,7 +132,7 @@ export default function Dashboard() {
     {
       title: t.dashboard.weeklyRevenue,
       value: `€${stats.weeklyRevenue.toFixed(2)}`,
-      change: 'All time',
+      change: t.dashboard.allTime,
       iconSvg: '/svg_custom/euro-banknote-svgrepo-com.svg',
       gradient: 'from-yellow-600 to-amber-700',
       bgGradient: 'from-yellow-600/10 to-amber-700/10',
@@ -168,9 +168,9 @@ export default function Dashboard() {
           >
             <div>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-white via-gray-100 to-yellow-200 bg-clip-text text-transparent mb-1 sm:mb-2">
-                Welcome back, {user.firstName}!
+                {t.dashboard.welcome}, {user.firstName}!
               </h1>
-              <p className="text-gray-400 text-sm sm:text-base lg:text-lg">Here's what's happening with your barbershop today.</p>
+              <p className="text-gray-400 text-sm sm:text-base lg:text-lg">{t.dashboard.welcomeMessage}</p>
             </div>
             <Link
               href="/dashboard/appointments/new"
@@ -308,7 +308,7 @@ export default function Dashboard() {
                         </div>
                         <div className="flex-1">
                           <p className="text-white font-medium text-sm">{barber.firstName} {barber.lastName}</p>
-                          <p className="text-green-400 text-xs">● Active</p>
+                          <p className="text-green-400 text-xs">● {t.dashboard.active}</p>
                         </div>
                       </div>
                     ))

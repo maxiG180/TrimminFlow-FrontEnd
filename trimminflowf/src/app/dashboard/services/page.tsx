@@ -68,7 +68,7 @@ export default function ServicesPage() {
       setTotalPages(response.totalPages);
       setTotalElements(response.totalElements);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load services');
+      setError(err.response?.data?.message || t.services.loadError);
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -85,10 +85,10 @@ export default function ServicesPage() {
     try {
       if (editingService) {
         await serviceApi.update(user.barbershopId, editingService.id, data);
-        setSuccessMessage('Service updated successfully!');
+        setSuccessMessage(t.services.updateSuccess);
       } else {
         await serviceApi.create(user.barbershopId, data);
-        setSuccessMessage('Service created successfully!');
+        setSuccessMessage(t.services.createSuccess);
       }
 
       setShowModal(false);
@@ -98,7 +98,7 @@ export default function ServicesPage() {
       // Clear success message after 3 seconds
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to save service');
+      setError(err.response?.data?.message || t.services.createError);
     } finally {
       setIsSubmitting(false);
     }
@@ -111,15 +111,15 @@ export default function ServicesPage() {
 
   const handleDelete = async (serviceId: string) => {
     if (!user?.barbershopId) return;
-    if (!confirm('Are you sure you want to delete this service?')) return;
+    if (!confirm(t.services.deleteConfirm)) return;
 
     try {
       await serviceApi.delete(user.barbershopId, serviceId);
-      setSuccessMessage('Service deleted successfully!');
+      setSuccessMessage(t.services.deleteSuccess);
       await loadServices();
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete service');
+      setError(err.response?.data?.message || t.services.deleteError);
     }
   };
 
@@ -151,9 +151,9 @@ export default function ServicesPage() {
       <div className="flex-1 p-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Services Management</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">{t.services.management}</h1>
           <p className="text-gray-400">
-            Manage your barbershop services • {totalElements} total service{totalElements !== 1 ? 's' : ''}
+            {t.services.managementDescription} • {totalElements} {totalElements !== 1 ? t.services.totalServicesPlural : t.services.totalServices}
           </p>
         </div>
 
@@ -175,12 +175,12 @@ export default function ServicesPage() {
             <SearchBar
               value={searchTerm}
               onChange={handleSearchChange}
-              placeholder="Search services by name or description..."
+              placeholder={t.services.searchPlaceholder}
             />
           </div>
           <Button onClick={() => setShowModal(true)} className="whitespace-nowrap">
             <Plus className="w-5 h-5 mr-2" />
-            Add Service
+            {t.services.addService}
           </Button>
         </div>
 
@@ -193,13 +193,13 @@ export default function ServicesPage() {
           <div className="text-center py-20">
             <div className="text-gray-400 mb-4">
               {searchTerm
-                ? 'No services found matching your search.'
-                : 'No services yet. Add your first service to get started!'}
+                ? t.services.noServicesFound
+                : t.services.noServicesYet}
             </div>
             {!searchTerm && (
               <Button onClick={() => setShowModal(true)}>
                 <Plus className="w-5 h-5 mr-2" />
-                Add Your First Service
+                {t.services.addFirstService}
               </Button>
             )}
           </div>
