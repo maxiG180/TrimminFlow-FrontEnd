@@ -118,7 +118,7 @@ const Navbar: React.FC<NavbarProps> = ({
                       onClick={logout}
                     >
                       <LogOut className="w-4 h-4 mr-2" />
-                      Logout
+                      {t.nav.logout}
                     </Button>
                   </div>
                 ) : (
@@ -128,13 +128,13 @@ const Navbar: React.FC<NavbarProps> = ({
                       href="/login"
                       className={getLinkClassName('default')}
                     >
-                      Login
+                      {t.nav.login}
                     </Link>
                     <Link
                       href="/register"
                       className={getLinkClassName('primary')}
                     >
-                      Register
+                      {t.nav.register}
                     </Link>
                   </div>
                 )}
@@ -209,7 +209,7 @@ const Navbar: React.FC<NavbarProps> = ({
                           className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white/5 hover:bg-white/10 text-white rounded-lg transition-all"
                         >
                           <LogOut className="w-5 h-5" />
-                          <span className="font-medium">Logout</span>
+                          <span className="font-medium">{t.nav.logout}</span>
                         </button>
                       </>
                     ) : (
@@ -222,14 +222,14 @@ const Navbar: React.FC<NavbarProps> = ({
                           onClick={closeMobileMenu}
                           className="block w-full px-4 py-3 text-center bg-white/5 hover:bg-white/10 text-white rounded-lg transition-all font-medium"
                         >
-                          Login
+                          {t.nav.login}
                         </Link>
                         <Link
                           href="/register"
                           onClick={closeMobileMenu}
                           className="block w-full px-4 py-3 text-center bg-gradient-to-r from-yellow-400 to-amber-500 text-black hover:from-yellow-500 hover:to-amber-600 rounded-lg font-medium"
                         >
-                          Register
+                          {t.nav.register}
                         </Link>
                       </>
                     )}

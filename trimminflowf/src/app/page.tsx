@@ -65,23 +65,23 @@ export default function Home() {
   ];
 
   const pricingFeatures = [
-    "Unlimited appointments",
-    "Custom booking page",
-    "Customer management",
-    "SMS & email reminders",
-    "Business analytics",
-    "Mobile app access",
-    "24/7 support",
-    "QR code generator",
+    t.pricing.feature1,
+    t.pricing.feature2,
+    t.pricing.feature3,
+    t.pricing.feature4,
+    t.pricing.feature5,
+    t.pricing.feature6,
+    t.pricing.feature7,
+    t.pricing.feature8,
   ];
 
   const navLinks = [
-    { href: "#features", label: "Features", variant: "default" as const },
-    { href: "#pricing", label: "Pricing", variant: "default" as const },
-    { href: "#testimonials", label: "Reviews", variant: "default" as const },
+    { href: "#features", label: t.nav.features, variant: "default" as const },
+    { href: "#pricing", label: t.nav.pricing, variant: "default" as const },
+    { href: "#testimonials", label: t.nav.reviews, variant: "default" as const },
     {
       href: "/dashboard",
-      label: "Dashboard",
+      label: t.nav.dashboard,
       variant: "outline" as const,
       requiresAuth: true,
     },
@@ -211,7 +211,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-10 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-heading mb-4 sm:mb-6 tracking-tight">
-              What Barbers Are Saying
+              {t.testimonials.title}
             </h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
@@ -246,20 +246,20 @@ export default function Home() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-heading mb-4 sm:mb-6 tracking-tight">
-              Simple, Transparent Pricing
+              {t.pricing.title}
             </h2>
           </div>
           <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl border-2 border-yellow-400/30 rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 relative">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-400 to-amber-500 text-black px-4 sm:px-6 py-1.5 sm:py-2 rounded-b-lg sm:rounded-b-xl font-bold text-sm sm:text-base">
-              Most Popular
+              {t.pricing.mostPopular}
             </div>
             <div className="text-center mb-6 sm:mb-8 mt-6 sm:mt-0">
               <h3 className="text-2xl sm:text-3xl font-bold font-heading mb-3 sm:mb-4 tracking-wide">
-                Professional Plan
+                {t.pricing.professionalPlan}
               </h3>
               <div className="flex items-center justify-center gap-2 mb-4">
                 <span className="text-4xl sm:text-5xl lg:text-6xl font-bold text-yellow-400">€29</span>
-                <span className="text-gray-400 text-lg sm:text-xl">/month</span>
+                <span className="text-gray-400 text-lg sm:text-xl">{t.pricing.perMonth}</span>
               </div>
             </div>
             <div className="grid sm:grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
@@ -275,7 +275,7 @@ export default function Home() {
                 href="/register"
                 className="inline-flex items-center justify-center w-full bg-gradient-to-r from-yellow-400 to-amber-500 text-black hover:from-yellow-500 hover:to-amber-600 text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-medium"
               >
-                Start Free 14-Day Trial
+                {t.pricing.startTrial}
                 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
               </Link>
             </div>
@@ -286,7 +286,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="py-12 px-6 border-t border-white/10">
         <div className="max-w-7xl mx-auto text-center text-gray-400">
-          <p>&copy; 2025 TRIMMINFLOW. All rights reserved.</p>
+          <p>{t.footer.copyright}</p>
         </div>
       </footer>
     </div>

@@ -6,7 +6,11 @@ export const translations = {
             features: 'Features',
             pricing: 'Pricing',
             contact: 'Contact',
+            reviews: 'Reviews',
+            dashboard: 'Dashboard',
             login: 'Login',
+            logout: 'Logout',
+            register: 'Register',
             getStarted: 'Get Started',
         },
 
@@ -280,6 +284,33 @@ export const translations = {
             no: 'No',
             confirm: 'Confirm',
         },
+
+        // Testimonials
+        testimonials: {
+            title: 'What Barbers Are Saying',
+        },
+
+        // Pricing
+        pricing: {
+            title: 'Simple, Transparent Pricing',
+            mostPopular: 'Most Popular',
+            professionalPlan: 'Professional Plan',
+            perMonth: '/month',
+            startTrial: 'Start Free 14-Day Trial',
+            feature1: 'Unlimited appointments',
+            feature2: 'Custom booking page',
+            feature3: 'Customer management',
+            feature4: 'SMS & email reminders',
+            feature5: 'Business analytics',
+            feature6: 'Mobile app access',
+            feature7: '24/7 support',
+            feature8: 'QR code generator',
+        },
+
+        // Footer
+        footer: {
+            copyright: '© 2025 TRIMMINFLOW. All rights reserved.',
+        },
     },
 
     pt: {
@@ -289,7 +320,11 @@ export const translations = {
             features: 'Funcionalidades',
             pricing: 'Preços',
             contact: 'Contacto',
+            reviews: 'Avaliações',
+            dashboard: 'Painel',
             login: 'Entrar',
+            logout: 'Sair',
+            register: 'Registar',
             getStarted: 'Começar',
         },
 
@@ -562,6 +597,33 @@ export const translations = {
             yes: 'Sim',
             no: 'Não',
             confirm: 'Confirmar',
+        },
+
+        // Testimonials
+        testimonials: {
+            title: 'O Que Dizem os Barbeiros',
+        },
+
+        // Pricing
+        pricing: {
+            title: 'Preços Simples e Transparentes',
+            mostPopular: 'Mais Popular',
+            professionalPlan: 'Plano Profissional',
+            perMonth: '/mês',
+            startTrial: 'Comece o Teste Grátis de 14 Dias',
+            feature1: 'Marcações ilimitadas',
+            feature2: 'Página de reservas personalizada',
+            feature3: 'Gestão de clientes',
+            feature4: 'Lembretes por SMS e e-mail',
+            feature5: 'Análises de negócio',
+            feature6: 'Acesso à aplicação móvel',
+            feature7: 'Suporte 24/7',
+            feature8: 'Gerador de códigos QR',
+        },
+
+        // Footer
+        footer: {
+            copyright: '© 2025 TRIMMINFLOW. Todos os direitos reservados.',
         },
     },
 } as const;
