@@ -23,6 +23,15 @@ const oswald = Oswald({
 export const metadata: Metadata = {
   title: "TRIMMINFLOW - Modern Barbershop Management",
   description: "Transform your barbershop with smart scheduling, online booking, and customer management",
+  icons: {
+    icon: [
+      { url: '/img/logo.png', sizes: 'any' },
+      { url: '/img/logo.png', sizes: '32x32', type: 'image/png' },
+      { url: '/img/logo.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: '/img/logo.png',
+    shortcut: '/img/logo.png',
+  },
 };
 
 export default function RootLayout({
