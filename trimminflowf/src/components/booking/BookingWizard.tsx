@@ -31,6 +31,7 @@ export default function BookingWizard({ barbershopId, preSelectedBarberId }: Boo
     const [availableSlots, setAvailableSlots] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
     const [slotsLoading, setSlotsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     // Wizard State
     const [step, setStep] = useState(1);
@@ -58,11 +59,18 @@ export default function BookingWizard({ barbershopId, preSelectedBarberId }: Boo
     const loadInitialData = async () => {
         try {
             setLoading(true);
+            setError(null);
+
+            console.log('🔍 Loading booking data for barbershopId:', barbershopId);
+
             const [shopRes, servicesRes, barbersRes] = await Promise.all([
                 barbershopApi.getById(barbershopId),
                 serviceApi.getActive(barbershopId),
                 barberApi.getActive(barbershopId)
             ]);
+
+            console.log('✅ Barbershop loaded:', shopRes);
+
             setBarbershop(shopRes);
             setServices(servicesRes);
             setBarbers(barbersRes);
@@ -74,8 +82,10 @@ export default function BookingWizard({ barbershopId, preSelectedBarberId }: Boo
                     setSelection(prev => ({ ...prev, barber: preSelectedBarber }));
                 }
             }
-        } catch (error) {
-            console.error('Failed to load booking data:', error);
+        } catch (error: any) {
+            console.error('❌ Failed to load booking data:', error);
+            const errorMessage = error?.message || error?.toString() || 'Unknown error';
+            setError(`Barbershop not found (ID: ${barbershopId}). ${errorMessage}`);
         } finally {
             setLoading(false);
         }
@@ -151,7 +161,28 @@ export default function BookingWizard({ barbershopId, preSelectedBarberId }: Boo
         );
     }
 
-    if (!barbershop) return <div className="text-white text-center p-10">Barbershop not found</div>;
+    if (error || !barbershop) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white flex items-center justify-center p-4">
+                <div className="text-center max-w-md">
+                    <div className="text-6xl mb-4">❌</div>
+                    <h1 className="text-2xl font-bold mb-2">Barbershop Not Found</h1>
+                    <p className="text-gray-400 mb-4">
+                        {error || 'The barbershop you are trying to book with could not be found.'}
+                    </p>
+                    <div className="bg-white/5 border border-white/10 rounded-lg p-4 text-left">
+                        <p className="text-sm text-gray-400 mb-2">Debug Information:</p>
+                        <code className="text-xs text-yellow-400 block break-all">
+                            Barbershop ID: {barbershopId}
+                        </code>
+                    </div>
+                    <p className="text-gray-500 text-sm mt-6">
+                        If you think this is an error, please contact the barbershop.
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     // Calculate total steps based on whether barber is pre-selected
     const totalSteps = preSelectedBarberId ? 3 : 4;

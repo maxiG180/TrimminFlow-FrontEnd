@@ -32,6 +32,11 @@ export default function QRPage() {
         ? `${window.location.origin}/book/${user.barbershopId}`
         : `http://localhost:3000/book/${user.barbershopId}`;
 
+    console.log('📍 QR Code Details:', {
+        barbershopId: user.barbershopId,
+        bookingUrl: bookingUrl
+    });
+
     const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(bookingUrl)}`;
 
     const handleCopy = () => {

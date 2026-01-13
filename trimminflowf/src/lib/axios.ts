@@ -120,4 +120,61 @@ apiClient.interceptors.response.use(
   }
 );
 
+/**
+ * Public API client without credentials
+ * 
+ * Use this for public endpoints that don't require authentication
+ * (e.g., booking pages, QR code scanning)
+ * 
+ * This avoids cookie issues on mobile browsers and cross-origin restrictions
+ */
+export const publicApiClient = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: false, // ✅ No cookies needed for public endpoints
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Same error handling as the authenticated client
+publicApiClient.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    if (error.response) {
+      const errorData = error.response.data as any;
+      const status = error.response.status;
+
+      let errorMessage = `Request failed with status ${status}`;
+
+      if (errorData?.fieldErrors) {
+        const fieldMessages = Object.entries(errorData.fieldErrors)
+          .map(([field, message]) => `${field}: ${message}`)
+          .join(', ');
+        errorMessage = `Validation errors: ${fieldMessages}`;
+      }
+      else if (errorData?.message) {
+        errorMessage = errorData.message;
+      }
+      else if (errorData?.error) {
+        errorMessage = errorData.error;
+      }
+      else if (error.response.statusText) {
+        errorMessage = error.response.statusText;
+      }
+
+      throw new ApiError(status, errorMessage, errorData);
+    }
+    else if (error.request) {
+      throw new ApiError(
+        500,
+        'Cannot connect to server. Please check your internet connection.',
+        { originalError: error.message }
+      );
+    }
+    else {
+      throw new ApiError(500, error.message || 'An unexpected error occurred');
+    }
+  }
+);
+
 export default apiClient;

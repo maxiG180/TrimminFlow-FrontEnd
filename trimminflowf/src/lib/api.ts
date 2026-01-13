@@ -3,7 +3,7 @@ import { Service, CreateServiceRequest, UpdateServiceRequest } from '@/types/ser
 import { Barber, BarberResponse, CreateBarberRequest, UpdateBarberRequest } from '@/types/barber';
 import { BusinessHours, BusinessHoursResponse, SetBusinessHoursRequest } from '@/types/businessHours';
 import { PageResponse, PaginationParams } from '@/types/pagination';
-import apiClient from './axios';
+import apiClient, { publicApiClient } from './axios';
 import { Appointment, CreateAppointmentRequest, UpdateAppointmentRequest, AppointmentFilters } from '@/types/appointment';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://trimminflow-backend-production.up.railway.app/api/v1';
@@ -266,7 +266,7 @@ export const serviceApi = {
    * @returns List of active services
    */
   async getActive(barbershopId: string): Promise<Service[]> {
-    const response = await apiClient.get<Service[]>('/services/active', {
+    const response = await publicApiClient.get<Service[]>('/services/active', {
       headers: {
         'X-Barbershop-Id': barbershopId,
       },
@@ -467,7 +467,7 @@ export const barberApi = {
    * Get all active barbers (paginated, but we'll fetch a large page for the UI)
    */
   async getActive(barbershopId: string): Promise<BarberResponse[]> {
-    const response = await apiClient.get<PageResponse<BarberResponse>>('/barbers/active', {
+    const response = await publicApiClient.get<PageResponse<BarberResponse>>('/barbers/active', {
       headers: {
         'X-Barbershop-Id': barbershopId,
       },
@@ -518,7 +518,7 @@ export const businessHoursApi = {
  */
 export const appointmentApi = {
   async create(barbershopId: string, data: CreateAppointmentRequest): Promise<Appointment> {
-    const response = await apiClient.post<Appointment>('/appointments', data, {
+    const response = await publicApiClient.post<Appointment>('/appointments', data, {
       headers: { 'X-Barbershop-Id': barbershopId },
     });
     return response.data;
@@ -548,7 +548,7 @@ export const appointmentApi = {
     });
   },
   async getAvailableSlots(barberId: string, date: string, serviceDuration: number): Promise<string[]> {
-    const response = await apiClient.get<string[]>('/appointments/availability', {
+    const response = await publicApiClient.get<string[]>('/appointments/availability', {
       params: { barberId, date, serviceDuration },
     });
     return response.data;
