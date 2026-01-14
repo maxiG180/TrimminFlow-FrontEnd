@@ -110,8 +110,25 @@ export const barbershopApi = {
    * Get barbershop by ID (public endpoint - no auth required)
    */
   async getById(id: string): Promise<Barbershop> {
-    const response = await publicApiClient.get<Barbershop>(`/barbershops/${id}`);
-    return response.data;
+    try {
+      const response = await fetch(`${API_BASE_URL}/barbershops/${id}`);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new ApiError(
+          response.status,
+          errorData.message || `Failed to fetch barbershop: ${response.statusText}`,
+          errorData
+        );
+      }
+
+      return await response.json();
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError(500, 'Network error: Could not connect to the server');
+    }
   },
 };
 
@@ -249,11 +266,7 @@ export const serviceApi = {
    * @returns List of active services
    */
   async getActive(barbershopId: string): Promise<Service[]> {
-    const response = await publicApiClient.get<Service[]>('/services/active', {
-      headers: {
-        'X-Barbershop-Id': barbershopId,
-      },
-    });
+    const response = await apiClient.get<Service[]>('/services/active');
     return response.data;
   },
 
@@ -450,12 +463,9 @@ export const barberApi = {
    * Get all active barbers (paginated, but we'll fetch a large page for the UI)
    */
   async getActive(barbershopId: string): Promise<BarberResponse[]> {
-    const response = await publicApiClient.get<PageResponse<BarberResponse>>('/barbers/active', {
-      headers: {
-        'X-Barbershop-Id': barbershopId,
-      },
+    const response = await apiClient.get<PageResponse<BarberResponse>>('/barbers/active', {
       params: {
-        size: 100, // Fetch enough for the UI
+        size: 100,
       },
     });
     return response.data.content;
