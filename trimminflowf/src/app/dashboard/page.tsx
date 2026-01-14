@@ -100,8 +100,8 @@ export default function Dashboard() {
     }
   };
 
-  // Show loading state while checking auth
-  if (!isAuthenticated || !user) {
+  // Show loading state while checking auth or fetching data
+  if (!isAuthenticated || !user || loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#1a1a1a] to-[#2d2d2d] flex items-center justify-center" suppressHydrationWarning>
         <div className="text-center">
